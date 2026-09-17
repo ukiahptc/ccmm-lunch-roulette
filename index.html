@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CCMM 점심 룰렛</title>
+<meta name="description" content="여의도 CCMM빌딩 주변(여의도공원 서측 ~ 국회의사당역) 점심 맛집 룰렛">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f6f4ee; --surface:#ffffff; --ink:#1d1b16; --muted:#6b6660; --line:#e5e0d6;
+  --accent:#d3542a; --accent-ink:#fff; --chip:#efebe2; --chip-on:#1d1b16; --chip-on-ink:#fff;
+  --ok:#2f7d4f; --warn:#b8860b; --shadow:0 10px 30px rgba(30,25,15,.08);
+  --w1:#f4c95d;--w2:#e8845c;--w3:#7fb3a8;--w4:#f0a5a5;--w5:#9bb8e6;--w6:#c9b6e4;--w7:#a9d18e;--w8:#f7d9a6;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#15130f; --surface:#1f1c17; --ink:#f2eee6; --muted:#a8a196; --line:#33302a;
+    --accent:#ef7a4f; --chip:#2a2620; --chip-on:#f2eee6; --chip-on-ink:#15130f; --shadow:0 10px 30px rgba(0,0,0,.4);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#15130f; --surface:#1f1c17; --ink:#f2eee6; --muted:#a8a196; --line:#33302a;
+  --accent:#ef7a4f; --chip:#2a2620; --chip-on:#f2eee6; --chip-on-ink:#15130f; --shadow:0 10px 30px rgba(0,0,0,.4);
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:"Noto Sans KR",system-ui,-apple-system,sans-serif;line-height:1.55;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1100px;margin:0 auto;padding:24px 16px 80px}
+header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:20px}
+h1{font-size:clamp(26px,4vw,40px);font-weight:900;letter-spacing:-.02em;margin:0;line-height:1.15}
+h1 small{display:block;font-size:14px;font-weight:500;color:var(--muted);margin-top:6px;letter-spacing:0}
+.stats{font-size:13px;color:var(--muted);text-align:right}
+.stats b{color:var(--ink)}
+.grid{display:grid;grid-template-columns:minmax(0,1fr);gap:20px}
+@media(min-width:900px){.grid{grid-template-columns:420px minmax(0,1fr)}}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:18px;box-shadow:var(--shadow)}
+.wheel-wrap{position:relative;width:min(100%,380px);aspect-ratio:1;margin:0 auto}
+canvas{width:100%;height:100%;display:block;border-radius:50%}
+.pointer{position:absolute;top:-6px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:16px solid transparent;border-right:16px solid transparent;border-top:30px solid var(--accent);filter:drop-shadow(0 3px 3px rgba(0,0,0,.25));z-index:2}
+.hub{position:absolute;inset:0;display:grid;place-items:center;pointer-events:none}
+.hub span{background:var(--surface);border:4px solid var(--ink);width:56px;height:56px;border-radius:50%;display:grid;place-items:center;font-weight:900;font-size:13px}
+.spin{display:block;width:100%;margin-top:18px;padding:16px;border:0;border-radius:14px;background:var(--accent);color:var(--accent-ink);font:inherit;font-size:20px;font-weight:900;cursor:pointer;letter-spacing:.02em;transition:transform .08s}
+.spin:active{transform:scale(.98)}
+.spin[disabled]{opacity:.55;cursor:not-allowed}
+.result{margin-top:16px;min-height:120px;border:2px dashed var(--line);border-radius:14px;padding:16px;text-align:center}
+.result.hit{border-style:solid;border-color:var(--accent);animation:pop .35s ease}
+@keyframes pop{0%{transform:scale(.96)}60%{transform:scale(1.02)}100%{transform:scale(1)}}
+.result .name{font-size:28px;font-weight:900;letter-spacing:-.02em}
+.result .meta{color:var(--muted);font-size:14px;margin-top:4px}
+.result .addr{font-size:13px;margin-top:6px}
+.links{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:12px}
+.links a,.btn{display:inline-block;padding:8px 12px;border-radius:999px;border:1px solid var(--line);background:var(--chip);color:var(--ink);text-decoration:none;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit}
+.links a.naver{background:#03c75a;color:#fff;border-color:#03c75a}
+.links a.kakao{background:#fee500;color:#191600;border-color:#fee500}
+.btn.ghost{background:transparent}
+.btn.danger{color:#b3261e}
+h2{font-size:16px;font-weight:900;margin:0 0 10px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+h2 .sub{font-weight:500;color:var(--muted);font-size:12px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{padding:7px 12px;border-radius:999px;background:var(--chip);border:1px solid transparent;font-size:13px;font-weight:700;cursor:pointer;user-select:none}
+.chip.on{background:var(--chip-on);color:var(--chip-on-ink)}
+.row{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;font-size:14px;margin-top:12px}
+.row label{display:flex;align-items:center;gap:6px;cursor:pointer}
+.row input[type=number]{width:64px;padding:4px 6px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font:inherit}
+.note{font-size:13px;color:var(--muted);background:var(--chip);border-radius:12px;padding:12px 14px;margin-top:14px;line-height:1.6}
+.note b{color:var(--ink)}
+.badge{display:inline-block;font-size:11px;font-weight:700;padding:2px 7px;border-radius:6px;background:var(--chip);color:var(--muted);vertical-align:middle;margin-left:4px}
+.badge.ok{background:rgba(47,125,79,.15);color:var(--ok)}
+.badge.na{background:rgba(184,134,11,.15);color:var(--warn)}
+.badge.out{background:rgba(179,38,30,.12);color:#b3261e}
+table{width:100%;border-collapse:collapse;font-size:13px;margin-top:8px}
+th,td{text-align:left;padding:9px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:12px;color:var(--muted);font-weight:700;position:sticky;top:0;background:var(--surface)}
+tr.off td{opacity:.42}
+td .nm{font-weight:700}
+td .sm{color:var(--muted);font-size:12px}
+td input.rate{width:58px;padding:3px 5px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink);font:inherit;font-size:13px}
+td a{color:inherit}
+td.map{white-space:nowrap}
+.tablewrap{max-height:70vh;overflow:auto;border:1px solid var(--line);border-radius:12px;margin-top:10px}
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:12px}
+.toolbar input[type=search]{flex:1;min-width:160px;padding:9px 12px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);font:inherit}
+.history{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.history span{font-size:12px;padding:4px 9px;border-radius:999px;background:var(--chip);color:var(--muted)}
+footer{margin-top:28px;font-size:12px;color:var(--muted);line-height:1.7}
+.sr{position:absolute;left:-9999px}
+@media(max-width:520px){.result .name{font-size:24px} th:nth-child(5),td:nth-child(5){display:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>CCMM 점심 룰렛 <small>여의도공원 서측 · 국회의사당역까지 · 네이버 별점 4.5 기준</small></h1>
+  <div class="stats" id="stats"></div>
+</header>
+
+<div class="grid">
+  <section class="card">
+    <div class="wheel-wrap">
+      <div class="pointer" aria-hidden="true"></div>
+      <canvas id="wheel" width="760" height="760" aria-label="점심 룰렛"></canvas>
+      <div class="hub"><span>GO</span></div>
+    </div>
+    <button class="spin" id="spin">룰렛 돌리기</button>
+    <div class="result" id="result" aria-live="polite">
+      <div class="meta">버튼을 누르면 오늘의 점심이 정해집니다.</div>
+    </div>
+    <div class="history" id="history"></div>
+  </section>
+
+  <section class="card">
+    <h2>필터 <span class="sub" id="poolCount"></span></h2>
+    <div class="chips" id="catChips"></div>
+    <div class="row" id="zoneRow"></div>
+    <div class="row">
+      <label><input type="checkbox" id="onlyRated" checked> 네이버 별점 <input type="number" id="minRate" min="0" max="5" step="0.1" value="4.5"> 이상만</label>
+      <label><input type="checkbox" id="includeUnrated" checked> 별점 미확인도 포함</label>
+      <label><input type="checkbox" id="skipRecent" checked> 최근 5회 당첨 제외</label>
+    </div>
+    <div class="note" id="dataNote"></div>
+
+    <h2 style="margin-top:22px">후보 목록 <span class="sub">별점 칸은 직접 수정 가능 · 브라우저에 저장됨</span></h2>
+    <div class="toolbar">
+      <input type="search" id="q" placeholder="상호·메뉴·건물 검색">
+      <button class="btn ghost" id="exportBtn">수정한 별점 JSON 내보내기</button>
+      <button class="btn ghost danger" id="resetBtn">로컬 수정 초기화</button>
+    </div>
+    <div class="tablewrap">
+      <table id="tbl">
+        <thead><tr><th>포함</th><th>상호</th><th>분류·대표메뉴</th><th>네이버 별점</th><th>위치</th><th>지도</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+</div>
+
+<footer id="foot"></footer>
+</div>
+
+<script src="data.js"></script>
+<script>
+(function(){
+  const LS = { rates:'ccmm.rates.v1', hist:'ccmm.hist.v1', excl:'ccmm.excl.v1', filt:'ccmm.filt.v1' };
+  const load=(k,d)=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}};
+  const save=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
+
+  const data = window.RESTAURANTS || [];
+  const meta = window.META || {};
+  let rates = load(LS.rates,{});      // 사용자가 입력한 별점 (id -> number|null)
+  let hist  = load(LS.hist,[]);       // 최근 당첨 id
+  let excl  = load(LS.excl,{});       // 수동 제외 (id -> true)
+  let filt  = load(LS.filt,{cats:[],zones:null});
+
+  const CATS = [...new Set(data.map(d=>d.cat))];
+  const ZONES = meta.zones || [];
+  const inZone = z => !ZONES.find(x=>x.id===z) || ZONES.find(x=>x.id===z).inScope!==false;
+  if(!filt.zones) filt.zones = ZONES.filter(z=>z.inScope!==false).map(z=>z.id);
+
+  const ratingOf = d => (rates[d.id]!==undefined && rates[d.id]!==null && rates[d.id]!=='') ? Number(rates[d.id]) : (d.naver ?? null);
+
+  // ---------- 필터 UI ----------
+  const catChips = document.getElementById('catChips');
+  CATS.forEach(c=>{
+    const el=document.createElement('span'); el.className='chip'+(filt.cats.length===0||filt.cats.includes(c)?' on':''); el.textContent=c;
+    el.onclick=()=>{ 
+      if(filt.cats.length===0) filt.cats=[c]; // 전체에서 하나 고르면 단독 선택
+      else if(filt.cats.includes(c)){ filt.cats=filt.cats.filter(x=>x!==c); }
+      else filt.cats.push(c);
+      if(filt.cats.length===CATS.length) filt.cats=[];
+      save(LS.filt,filt); render();
+    };
+    catChips.appendChild(el);
+  });
+  const zoneRow=document.getElementById('zoneRow');
+  ZONES.forEach(z=>{
+    const l=document.createElement('label');
+    const cb=document.createElement('input'); cb.type='checkbox'; cb.checked=filt.zones.includes(z.id);
+    cb.onchange=()=>{ filt.zones = cb.checked ? [...filt.zones,z.id] : filt.zones.filter(x=>x!==z.id); save(LS.filt,filt); render(); };
+    l.appendChild(cb); l.append(' '+z.label+(z.inScope===false?' (범위 밖)':''));
+    zoneRow.appendChild(l);
+  });
+  ['onlyRated','includeUnrated','skipRecent','minRate','q'].forEach(id=>document.getElementById(id).addEventListener('input',render));
+
+  function pool(){
+    const onlyRated=document.getElementById('onlyRated').checked;
+    const incUn=document.getElementById('includeUnrated').checked;
+    const min=parseFloat(document.getElementById('minRate').value)||0;
+    const skip=document.getElementById('skipRecent').checked;
+    const recent=new Set(hist.slice(0,5));
+    return data.filter(d=>{
+      if(excl[d.id]) return false;
+      if(filt.cats.length && !filt.cats.includes(d.cat)) return false;
+      if(!filt.zones.includes(d.zone)) return false;
+      if(d.closed) return false;
+      const r=ratingOf(d);
+      if(onlyRated){
+        if(r===null){ if(!incUn) return false; }
+        else if(r<min) return false;
+      }
+      if(skip && recent.has(d.id)) return false;
+      return true;
+    });
+  }
+
+  // ---------- 룰렛 ----------
+  const cv=document.getElementById('wheel'), ctx=cv.getContext('2d');
+  const colors=['--w1','--w2','--w3','--w4','--w5','--w6','--w7','--w8'].map(v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim());
+  let angle=0, spinning=false, current=[];
+  function drawWheel(items){
+    const n=items.length, R=cv.width/2, cx=R, cy=R;
+    ctx.clearRect(0,0,cv.width,cv.height);
+    if(!n){ ctx.fillStyle='#ddd'; ctx.beginPath(); ctx.arc(cx,cy,R-4,0,Math.PI*2); ctx.fill();
+      ctx.fillStyle='#555'; ctx.font='bold 34px Noto Sans KR, sans-serif'; ctx.textAlign='center'; ctx.fillText('후보가 없습니다',cx,cy+12); return; }
+    const step=Math.PI*2/n;
+    for(let i=0;i<n;i++){
+      const a0=angle+i*step, a1=a0+step;
+      ctx.beginPath(); ctx.moveTo(cx,cy); ctx.arc(cx,cy,R-4,a0,a1); ctx.closePath();
+      ctx.fillStyle=colors[i%colors.length]; if(n%colors.length===1 && i===n-1) ctx.fillStyle=colors[(i+3)%colors.length];
+      ctx.fill(); ctx.strokeStyle='rgba(255,255,255,.7)'; ctx.lineWidth=2; ctx.stroke();
+      ctx.save(); ctx.translate(cx,cy); const mid=a0+step/2, left=Math.cos(mid)<0; ctx.rotate(left?mid+Math.PI:mid); ctx.textAlign=left?'left':'right'; ctx.fillStyle='#1d1b16';
+      const fs = n>60?13:n>40?15:n>28?18:n>18?22:26; ctx.font=`700 ${fs}px Noto Sans KR, sans-serif`;
+      let t=items[i].name; const maxW=R*0.62; while(ctx.measureText(t).width>maxW && t.length>2) t=t.slice(0,-1);
+      if(t!==items[i].name) t=t.replace(/\s+$/,'')+'…';
+      ctx.fillText(t,left?-(R-26):R-26,fs*0.36); ctx.restore();
+    }
+  }
+  function pickIndex(items){ // 포인터(12시 방향)가 가리키는 조각
+    const n=items.length, step=Math.PI*2/n;
+    const pointer=(-Math.PI/2 - angle) % (Math.PI*2);
+    const norm=(pointer+Math.PI*4)%(Math.PI*2);
+    return Math.floor(norm/step)%n;
+  }
+  const spinBtn=document.getElementById('spin');
+  spinBtn.onclick=()=>{
+    if(spinning) return;
+    const items=pool(); if(!items.length){ alert('조건에 맞는 후보가 없습니다. 필터를 풀어 주세요.'); return; }
+    current=items; spinning=true; spinBtn.disabled=true;
+    document.getElementById('result').className='result';
+    document.getElementById('result').innerHTML='<div class="meta">돌아가는 중…</div>';
+    const target=Math.random()*Math.PI*2;
+    const total=Math.PI*2*(6+Math.random()*3)+target;
+    const dur=4200+Math.random()*1200, start=performance.now(), a0=angle;
+    const ease=t=>1-Math.pow(1-t,4);
+    (function frame(now){
+      const t=Math.min(1,(now-start)/dur);
+      angle=a0+total*ease(t); drawWheel(current);
+      if(t<1) requestAnimationFrame(frame); else finish(current[pickIndex(current)]);
+    })(start);
+  };
+  function finish(d){
+    spinning=false; spinBtn.disabled=false;
+    hist=[d.id,...hist.filter(x=>x!==d.id)].slice(0,10); save(LS.hist,hist);
+    const r=ratingOf(d);
+    const el=document.getElementById('result'); el.className='result hit';
+    el.innerHTML=`
+      <div class="name">${esc(d.name)}</div>
+      <div class="meta">${esc(d.cat)} · ${esc(d.menu||'')}${d.price?' · '+esc(d.price):''}</div>
+      <div class="addr">${esc(d.addr||'')}${d.bldg?' <span class="badge">'+esc(d.bldg)+'</span>':''}
+        ${r!==null?`<span class="badge ok">네이버 ★${r.toFixed(2).replace(/0$/,'')}</span>`:'<span class="badge na">별점 미확인</span>'}</div>
+      <div class="links">
+        <a class="naver" target="_blank" rel="noopener" href="${naverUrl(d)}">네이버지도</a>
+        <a class="kakao" target="_blank" rel="noopener" href="${kakaoUrl(d)}">카카오맵</a>
+        <button class="btn" id="again">다시 돌리기</button>
+        <button class="btn ghost" id="skipToday">오늘은 빼고 다시</button>
+      </div>`;
+    document.getElementById('again').onclick=()=>spinBtn.click();
+    document.getElementById('skipToday').onclick=()=>{ excl[d.id]=true; save(LS.excl,excl); render(); spinBtn.click(); };
+    renderHistory();
+  }
+  const naverUrl=d=>'https://map.naver.com/p/search/'+encodeURIComponent(d.q||(d.name+' 여의도'));
+  const kakaoUrl=d=>'https://map.kakao.com/?q='+encodeURIComponent(d.q||(d.name+' 여의도'));
+  const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+  // ---------- 표 ----------
+  function renderTable(){
+    const q=(document.getElementById('q').value||'').trim().toLowerCase();
+    const tb=document.querySelector('#tbl tbody'); tb.innerHTML='';
+    const pset=new Set(pool().map(d=>d.id));
+    const zl=id=>(ZONES.find(z=>z.id===id)||{}).label||id;
+    data.slice().sort((a,b)=>(ratingOf(b)??-1)-(ratingOf(a)??-1)).forEach(d=>{
+      const hay=[d.name,d.cat,d.menu,d.bldg,d.addr,zl(d.zone)].join(' ').toLowerCase();
+      if(q && !hay.includes(q)) return;
+      const r=ratingOf(d); const userSet=rates[d.id]!==undefined;
+      const tr=document.createElement('tr'); if(!pset.has(d.id)) tr.className='off';
+      tr.innerHTML=`
+        <td><input type="checkbox" ${excl[d.id]?'':'checked'} title="후보에서 제외/포함"></td>
+        <td><div class="nm">${esc(d.name)}${d.closed?'<span class="badge out">폐업/미확인</span>':''}</div><div class="sm">${esc(d.bldg||'')}</div></td>
+        <td>${esc(d.cat)}<div class="sm">${esc(d.menu||'')}${d.price?' · '+esc(d.price):''}</div></td>
+        <td><input class="rate" type="number" min="0" max="5" step="0.01" value="${r===null?'':r}" placeholder="—" title="네이버 별점 직접 입력">
+            <div class="sm">${userSet?'수정됨':(d.naver!=null?'수집값':'미확인')}${d.src?' · '+esc(d.src):''}</div></td>
+        <td class="sm">${esc(zl(d.zone))}<br>${esc(d.addr||'')}</td>
+        <td class="sm map"><a target="_blank" rel="noopener" href="${naverUrl(d)}">네이버</a><br><a target="_blank" rel="noopener" href="${kakaoUrl(d)}">카카오</a></td>`;
+      tr.querySelector('input[type=checkbox]').onchange=e=>{ if(e.target.checked) delete excl[d.id]; else excl[d.id]=true; save(LS.excl,excl); render(); };
+      const inp=tr.querySelector('input.rate');
+      inp.onchange=()=>{ const v=inp.value.trim(); if(v==='') delete rates[d.id]; else rates[d.id]=Number(v); save(LS.rates,rates); render(); };
+      tb.appendChild(tr);
+    });
+  }
+  function renderHistory(){
+    const h=document.getElementById('history'); h.innerHTML='';
+    if(!hist.length) return;
+    const lbl=document.createElement('span'); lbl.textContent='최근 당첨'; h.appendChild(lbl);
+    hist.slice(0,5).forEach(id=>{ const d=data.find(x=>x.id===id); if(!d) return; const s=document.createElement('span'); s.textContent=d.name; h.appendChild(s); });
+  }
+  function render(){
+    const p=pool(); current=p; drawWheel(p);
+    const rated=data.filter(d=>ratingOf(d)!==null).length;
+    document.getElementById('poolCount').textContent=`지금 룰렛에 ${p.length}곳`;
+    document.getElementById('stats').innerHTML=`전체 후보 <b>${data.length}</b>곳 · 별점 확인 <b>${rated}</b>곳 · 룰렛 대상 <b>${p.length}</b>곳`;
+    document.getElementById('dataNote').innerHTML=meta.note||'';
+    document.getElementById('foot').innerHTML=meta.footer||'';
+    renderTable(); renderHistory();
+  }
+  document.getElementById('exportBtn').onclick=()=>{
+    const out=data.map(d=>({id:d.id,name:d.name,naver:ratingOf(d)}));
+    const blob=new Blob([JSON.stringify(out,null,2)],{type:'application/json'});
+    const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='ccmm-naver-ratings.json'; a.click();
+  };
+  document.getElementById('resetBtn').onclick=()=>{
+    if(!confirm('이 브라우저에 저장된 별점 수정·제외·당첨 기록을 모두 지울까요?')) return;
+    rates={};excl={};hist=[];filt={cats:[],zones:ZONES.filter(z=>z.inScope!==false).map(z=>z.id)};
+    Object.values(LS).forEach(k=>{try{localStorage.removeItem(k)}catch(e){}});
+    location.reload();
+  };
+  render();
+})();
+</script>
+</body>
+</html>
