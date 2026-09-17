@@ -24,10 +24,34 @@
   addr:'국회대로76길 10', bldg:'', zone:'alley', naver:null, src:'', q:'정인면옥 여의도' }
 ```
 
-- `naver`: 네이버지도 별점. **확인된 값만** 숫자로, 모르면 `null`.
+- `naver`: 네이버지도 별점. **확인된 값만** 숫자로, 모르면 `null`. 수집 스크립트가 `naverCount`(리뷰 수)·`naverName`(매칭된 상호)·`naverId`·`naverAt`(수집일)을 함께 채운다.
 - `zone`: `META.zones` 의 id. `inScope:false` 인 구역(국회의사당역 건너편 KBS·국회 앞)은 기본 제외.
 - `q`: 지도 검색어. 비우면 `상호 + 여의도` 로 검색.
 - `closed:true` 를 주면 목록에 남기되 룰렛에서 뺀다.
+
+## 네이버 별점 자동 수집 (`scripts/fetch-naver-ratings.mjs`)
+
+Node.js 18 이상이 설치된 PC에서 실행한다 (네이버 접속이 되는 환경이어야 함).
+
+```bash
+npm run setup          # 최초 1회: playwright 설치 + chromium 다운로드(약 150MB)
+npm run ratings:dry    # 먼저 결과만 확인 (data.js 안 건드림)
+npm run ratings        # data.js 의 naver 값 갱신, 원본은 data.js.bak 으로 백업
+git add data.js && git commit -m "네이버 별점 갱신" && git push   # 페이지에 반영
+```
+
+옵션:
+
+| 옵션 | 뜻 |
+|---|---|
+| `--only jungin,masam` | 지정한 id 만 수집 |
+| `--force` | 이미 별점이 있는 가게도 다시 수집 (기본은 `naver:null` 인 곳만) |
+| `--headful` | 브라우저 창을 띄워서 실행. 캡차가 뜨면 이 모드로 직접 풀고 진행 |
+| `--delay 3000` | 가게 사이 대기(ms). 기본 2000 |
+
+동작: 가게마다 `m.place.naver.com` 검색 → 여의도 소재 + 상호·도로명이 맞는 후보를 고름 → 별점(`visitorReviewScore`)·리뷰 수를 읽어 `naver`, `naverCount`, `naverName`, `naverId`, `naverAt` 에 기록.
+결과 요약은 `ratings-report.json` 에 남는다 (`notFound` 는 검색어를 `q` 필드에 직접 넣어 주면 해결되는 경우가 많다).
+네이버가 화면 구조를 바꾸면 파싱이 깨질 수 있는데, 그때는 `--headful` 로 열어 보고 스크립트의 선택자를 손보면 된다.
 
 ## 별점 데이터에 대한 주의
 

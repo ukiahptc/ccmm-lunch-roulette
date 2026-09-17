@@ -4,32 +4,33 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>CCMM 점심 룰렛</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍓</text></svg>">
 <meta name="description" content="여의도 CCMM빌딩 주변(여의도공원 서측 ~ 국회의사당역) 점심 맛집 룰렛">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#f6f4ee; --surface:#ffffff; --ink:#1d1b16; --muted:#6b6660; --line:#e5e0d6;
-  --accent:#d3542a; --accent-ink:#fff; --chip:#efebe2; --chip-on:#1d1b16; --chip-on-ink:#fff;
-  --ok:#2f7d4f; --warn:#b8860b; --shadow:0 10px 30px rgba(30,25,15,.08);
-  --w1:#f4c95d;--w2:#e8845c;--w3:#7fb3a8;--w4:#f0a5a5;--w5:#9bb8e6;--w6:#c9b6e4;--w7:#a9d18e;--w8:#f7d9a6;
+  --bg:#fff1f6; --surface:#ffffff; --ink:#3d1f2e; --muted:#9a6b82; --line:#f6cfe0;
+  --accent:#ff4f9a; --accent-ink:#fff; --chip:#ffe1ee; --chip-on:#d81b74; --chip-on-ink:#fff;
+  --ok:#2f7d4f; --warn:#b8860b; --shadow:0 12px 32px rgba(255,79,154,.14);
+  --w1:#ffd6e7;--w2:#ffb3d1;--w3:#ff8fc0;--w4:#ffc7f2;--w5:#f8b4ff;--w6:#ffdede;--w7:#ffe9b3;--w8:#c9e9ff;
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
-    --bg:#15130f; --surface:#1f1c17; --ink:#f2eee6; --muted:#a8a196; --line:#33302a;
-    --accent:#ef7a4f; --chip:#2a2620; --chip-on:#f2eee6; --chip-on-ink:#15130f; --shadow:0 10px 30px rgba(0,0,0,.4);
+    --bg:#241320; --surface:#301a2a; --ink:#ffe6f1; --muted:#d79ab8; --line:#4a2a3e;
+    --accent:#ff5fa8; --chip:#3d2134; --chip-on:#ff9ecb; --chip-on-ink:#2b1122; --shadow:0 10px 30px rgba(0,0,0,.45);
   }
 }
 :root[data-theme="dark"]{
-  --bg:#15130f; --surface:#1f1c17; --ink:#f2eee6; --muted:#a8a196; --line:#33302a;
-  --accent:#ef7a4f; --chip:#2a2620; --chip-on:#f2eee6; --chip-on-ink:#15130f; --shadow:0 10px 30px rgba(0,0,0,.4);
+  --bg:#241320; --surface:#301a2a; --ink:#ffe6f1; --muted:#d79ab8; --line:#4a2a3e;
+  --accent:#ff5fa8; --chip:#3d2134; --chip-on:#ff9ecb; --chip-on-ink:#2b1122; --shadow:0 10px 30px rgba(0,0,0,.45);
 }
 *{box-sizing:border-box}
 html,body{margin:0}
-body{background:var(--bg);color:var(--ink);font-family:"Noto Sans KR",system-ui,-apple-system,sans-serif;line-height:1.55;-webkit-font-smoothing:antialiased}
+body{background:radial-gradient(1200px 600px at 10% -10%, #ffd9ea 0%, transparent 60%), radial-gradient(900px 500px at 110% 10%, #ffe4f3 0%, transparent 55%), var(--bg);background-attachment:fixed;color:var(--ink);font-family:"Noto Sans KR",system-ui,-apple-system,sans-serif;line-height:1.55;-webkit-font-smoothing:antialiased}
 .wrap{max-width:1100px;margin:0 auto;padding:24px 16px 80px}
 header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:20px}
-h1{font-size:clamp(26px,4vw,40px);font-weight:900;letter-spacing:-.02em;margin:0;line-height:1.15}
+h1{font-size:clamp(26px,4vw,40px);font-weight:900;letter-spacing:-.02em;margin:0;line-height:1.15;color:var(--accent)}
 h1 small{display:block;font-size:14px;font-weight:500;color:var(--muted);margin-top:6px;letter-spacing:0}
 .stats{font-size:13px;color:var(--muted);text-align:right}
 .stats b{color:var(--ink)}
@@ -40,12 +41,12 @@ h1 small{display:block;font-size:14px;font-weight:500;color:var(--muted);margin-
 canvas{width:100%;height:100%;display:block;border-radius:50%}
 .pointer{position:absolute;top:-6px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:16px solid transparent;border-right:16px solid transparent;border-top:30px solid var(--accent);filter:drop-shadow(0 3px 3px rgba(0,0,0,.25));z-index:2}
 .hub{position:absolute;inset:0;display:grid;place-items:center;pointer-events:none}
-.hub span{background:var(--surface);border:4px solid var(--ink);width:56px;height:56px;border-radius:50%;display:grid;place-items:center;font-weight:900;font-size:13px}
-.spin{display:block;width:100%;margin-top:18px;padding:16px;border:0;border-radius:14px;background:var(--accent);color:var(--accent-ink);font:inherit;font-size:20px;font-weight:900;cursor:pointer;letter-spacing:.02em;transition:transform .08s}
+.hub span{background:var(--surface);border:4px solid var(--accent);color:var(--accent);width:56px;height:56px;border-radius:50%;display:grid;place-items:center;font-weight:900;font-size:13px}
+.spin{display:block;width:100%;margin-top:18px;padding:16px;border:0;border-radius:14px;background:linear-gradient(135deg,#ff6fb3,#ff3f92);box-shadow:0 8px 20px rgba(255,79,154,.35);color:var(--accent-ink);font:inherit;font-size:20px;font-weight:900;cursor:pointer;letter-spacing:.02em;transition:transform .08s}
 .spin:active{transform:scale(.98)}
 .spin[disabled]{opacity:.55;cursor:not-allowed}
 .result{margin-top:16px;min-height:120px;border:2px dashed var(--line);border-radius:14px;padding:16px;text-align:center}
-.result.hit{border-style:solid;border-color:var(--accent);animation:pop .35s ease}
+.result.hit{border-style:solid;border-color:var(--accent);background:linear-gradient(180deg,#fff7fb,#fff);animation:pop .35s ease}
 @keyframes pop{0%{transform:scale(.96)}60%{transform:scale(1.02)}100%{transform:scale(1)}}
 .result .name{font-size:28px;font-weight:900;letter-spacing:-.02em}
 .result .meta{color:var(--muted);font-size:14px;margin-top:4px}
@@ -67,7 +68,7 @@ h2 .sub{font-weight:500;color:var(--muted);font-size:12px}
 .note{font-size:13px;color:var(--muted);background:var(--chip);border-radius:12px;padding:12px 14px;margin-top:14px;line-height:1.6}
 .note b{color:var(--ink)}
 .badge{display:inline-block;font-size:11px;font-weight:700;padding:2px 7px;border-radius:6px;background:var(--chip);color:var(--muted);vertical-align:middle;margin-left:4px}
-.badge.ok{background:rgba(47,125,79,.15);color:var(--ok)}
+.badge.ok{background:rgba(255,79,154,.14);color:#d81b74}
 .badge.na{background:rgba(184,134,11,.15);color:var(--warn)}
 .badge.out{background:rgba(179,38,30,.12);color:#b3261e}
 table{width:100%;border-collapse:collapse;font-size:13px;margin-top:8px}
@@ -103,7 +104,7 @@ footer{margin-top:28px;font-size:12px;color:var(--muted);line-height:1.7}
       <canvas id="wheel" width="760" height="760" aria-label="점심 룰렛"></canvas>
       <div class="hub"><span>GO</span></div>
     </div>
-    <button class="spin" id="spin">룰렛 돌리기</button>
+    <button class="spin" id="spin">🍓 룰렛 돌리기</button>
     <div class="result" id="result" aria-live="polite">
       <div class="meta">버튼을 누르면 오늘의 점심이 정해집니다.</div>
     </div>
@@ -218,8 +219,8 @@ footer{margin-top:28px;font-size:12px;color:var(--muted);line-height:1.7}
       const a0=angle+i*step, a1=a0+step;
       ctx.beginPath(); ctx.moveTo(cx,cy); ctx.arc(cx,cy,R-4,a0,a1); ctx.closePath();
       ctx.fillStyle=colors[i%colors.length]; if(n%colors.length===1 && i===n-1) ctx.fillStyle=colors[(i+3)%colors.length];
-      ctx.fill(); ctx.strokeStyle='rgba(255,255,255,.7)'; ctx.lineWidth=2; ctx.stroke();
-      ctx.save(); ctx.translate(cx,cy); const mid=a0+step/2, left=Math.cos(mid)<0; ctx.rotate(left?mid+Math.PI:mid); ctx.textAlign=left?'left':'right'; ctx.fillStyle='#1d1b16';
+      ctx.fill(); ctx.strokeStyle='rgba(255,255,255,.85)'; ctx.lineWidth=2; ctx.stroke();
+      ctx.save(); ctx.translate(cx,cy); const mid=a0+step/2, left=Math.cos(mid)<0; ctx.rotate(left?mid+Math.PI:mid); ctx.textAlign=left?'left':'right'; ctx.fillStyle='#4a1f38';
       const fs = n>60?13:n>40?15:n>28?18:n>18?22:26; ctx.font=`700 ${fs}px Noto Sans KR, sans-serif`;
       let t=items[i].name; const maxW=R*0.62; while(ctx.measureText(t).width>maxW && t.length>2) t=t.slice(0,-1);
       if(t!==items[i].name) t=t.replace(/\s+$/,'')+'…';
@@ -258,7 +259,7 @@ footer{margin-top:28px;font-size:12px;color:var(--muted);line-height:1.7}
       <div class="name">${esc(d.name)}</div>
       <div class="meta">${esc(d.cat)} · ${esc(d.menu||'')}${d.price?' · '+esc(d.price):''}</div>
       <div class="addr">${esc(d.addr||'')}${d.bldg?' <span class="badge">'+esc(d.bldg)+'</span>':''}
-        ${r!==null?`<span class="badge ok">네이버 ★${r.toFixed(2).replace(/0$/,'')}</span>`:'<span class="badge na">별점 미확인</span>'}</div>
+        ${r!==null?`<span class="badge ok">네이버 ★${r.toFixed(2).replace(/0$/,'')}${d.naverCount?' · 리뷰 '+d.naverCount.toLocaleString():''}</span>`:'<span class="badge na">별점 미확인</span>'}</div>
       <div class="links">
         <a class="naver" target="_blank" rel="noopener" href="${naverUrl(d)}">네이버지도</a>
         <a class="kakao" target="_blank" rel="noopener" href="${kakaoUrl(d)}">카카오맵</a>
@@ -289,7 +290,7 @@ footer{margin-top:28px;font-size:12px;color:var(--muted);line-height:1.7}
         <td><div class="nm">${esc(d.name)}${d.closed?'<span class="badge out">폐업/미확인</span>':''}</div><div class="sm">${esc(d.bldg||'')}</div></td>
         <td>${esc(d.cat)}<div class="sm">${esc(d.menu||'')}${d.price?' · '+esc(d.price):''}</div></td>
         <td><input class="rate" type="number" min="0" max="5" step="0.01" value="${r===null?'':r}" placeholder="—" title="네이버 별점 직접 입력">
-            <div class="sm">${userSet?'수정됨':(d.naver!=null?'수집값':'미확인')}${d.src?' · '+esc(d.src):''}</div></td>
+            <div class="sm">${userSet?'수정됨':(d.naver!=null?'수집값'+(d.naverAt?' '+d.naverAt:''):'미확인')}${d.naverCount?' · 리뷰 '+d.naverCount.toLocaleString():''}${d.src?' · '+esc(d.src):''}</div></td>
         <td class="sm">${esc(zl(d.zone))}<br>${esc(d.addr||'')}</td>
         <td class="sm map"><a target="_blank" rel="noopener" href="${naverUrl(d)}">네이버</a><br><a target="_blank" rel="noopener" href="${kakaoUrl(d)}">카카오</a></td>`;
       tr.querySelector('input[type=checkbox]').onchange=e=>{ if(e.target.checked) delete excl[d.id]; else excl[d.id]=true; save(LS.excl,excl); render(); };

@@ -1,0 +1,15 @@
+{
+  "name": "ccmm-lunch-roulette",
+  "version": "1.0.0",
+  "private": true,
+  "description": "여의도 CCMM빌딩 주변 점심 맛집 룰렛 + 네이버 별점 수집 스크립트",
+  "type": "module",
+  "scripts": {
+    "setup": "npm install && npx playwright install chromium",
+    "ratings": "node scripts/fetch-naver-ratings.mjs",
+    "ratings:dry": "node scripts/fetch-naver-ratings.mjs --dry-run"
+  },
+  "devDependencies": {
+    "playwright": "^1.56.1"
+  }
+}
