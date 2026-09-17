@@ -42,13 +42,8 @@ window.RESTAURANTS = [
   // ── CCMM빌딩 안
   {"id": "hemil", "name": "헤밀파스타", "cat": "양식", "menu": "파스타·리조또 (샐러드·식전빵 제공)", "price": "", "addr": "여의공원로 101 B106호", "bldg": "CCMM빌딩 지하 아케이드", "zone": "ccmm", "naver": null, "src": "토 휴무", "q": ""},
   {"id": "kisoya", "name": "기소야 서여의도점", "cat": "일식", "menu": "냄비돈까스정식·김치우동", "price": "1.2만~1.6만", "addr": "여의공원로 101 지하1층", "bldg": "CCMM빌딩 지하 아케이드", "zone": "ccmm", "naver": null, "src": "토 휴무", "q": ""},
-  {"id": "baekwon", "name": "백원", "cat": "중식", "menu": "짬뽕·식사류", "price": "1만원대 초반", "addr": "여의공원로 101 12층", "bldg": "CCMM빌딩(국민일보) 12층", "zone": "ccmm", "naver": null, "src": "다이닝코드 66점 · 주말 휴무", "q": ""},
-  {"id": "gayang", "name": "가양 중화요리", "cat": "중식", "menu": "중식 요리·식사", "price": "식사 1만원대", "addr": "여의공원로 101", "bldg": "CCMM빌딩", "zone": "ccmm", "naver": null, "src": "", "q": ""},
-  {"id": "unsan", "name": "운산", "cat": "한식", "menu": "한정식", "price": "", "addr": "여의공원로 101 지하1층", "bldg": "CCMM빌딩 지하 아케이드", "zone": "ccmm", "naver": null, "src": "가격 미확인(고급 가능성, 확인 필요)", "q": ""},
   {"id": "gaya", "name": "가야분식", "cat": "분식·기타", "menu": "분식", "price": "", "addr": "여의공원로 101 지하1층", "bldg": "CCMM빌딩 지하 아케이드", "zone": "ccmm", "naver": null, "src": "", "q": ""},
   {"id": "ttukbaegi", "name": "여의도뚝배기", "cat": "한식", "menu": "뚝배기 정식", "price": "", "addr": "여의공원로 101 지하1층", "bldg": "CCMM빌딩 지하 아케이드", "zone": "ccmm", "naver": null, "src": "", "q": ""},
-  {"id": "ramyeon", "name": "생라면세대", "cat": "분식·기타", "menu": "라면", "price": "", "addr": "여의공원로 101 지하1층", "bldg": "CCMM빌딩 지하 아케이드", "zone": "ccmm", "naver": null, "src": "", "q": ""},
-  {"id": "ccmmcafeteria", "name": "CCMM빌딩 구내식당", "cat": "분식·기타", "menu": "구내식당 (11:30~13:30)", "price": "8천", "addr": "여의공원로 101", "bldg": "CCMM빌딩", "zone": "ccmm", "naver": null, "src": "", "q": ""},
   // ── 은행로 (중기중앙회·정우/안원빌딩)
   {"id": "bonavetti", "name": "보나베띠 여의도점", "cat": "양식", "menu": "화덕피자·파스타", "price": "", "addr": "은행로 30 1층", "bldg": "중소기업중앙회 신관", "zone": "bank", "naver": null, "src": "", "q": ""},
   {"id": "sanjeong", "name": "산정", "cat": "한식", "menu": "한식 정식", "price": "", "addr": "은행로 29 지하1층 56호", "bldg": "정우빌딩", "zone": "bank", "naver": null, "src": "주말 휴무", "q": ""},
@@ -57,7 +52,6 @@ window.RESTAURANTS = [
   {"id": "dwipuri", "name": "뒤푸리", "cat": "한식", "menu": "반건조 대구 해장국", "price": "", "addr": "은행로 29", "bldg": "정우빌딩", "zone": "bank", "naver": null, "src": "", "q": ""},
   // ── 국회대로 62~76길 골목 (순복음교회 뒤)
   {"id": "jungin", "name": "정인면옥", "cat": "한식", "menu": "평양냉면·만두", "price": "1.5만~1.7만", "addr": "국회대로76길 10 1층", "bldg": "기독교침례회총회빌딩", "zone": "alley", "naver": null, "src": "미쉐린 빕구르망 · 다이닝코드 ★4.0", "q": ""},
-  {"id": "haecho", "name": "해초연(해초가)", "cat": "한식", "menu": "해초·세꼬시·보리굴비 정식", "price": "", "addr": "국회대로76길 10 지하1층", "bldg": "", "zone": "alley", "naver": null, "src": "가격 미확인(고급 가능성, 확인 필요)", "q": ""},
   {"id": "hohwa", "name": "호화대반점", "cat": "중식", "menu": "노포 짜장·탕수육", "price": "1만원 안팎", "addr": "국회대로76길 18 지하1층", "bldg": "", "zone": "alley", "naver": null, "src": "", "q": ""},
   {"id": "shanghao", "name": "샹하오", "cat": "중식", "menu": "호텔 중식 런치세트", "price": "1만~2만 (런치)", "addr": "국회대로76길 16 2층", "bldg": "켄싱턴호텔 여의도", "zone": "alley", "naver": null, "src": "일 휴무", "q": ""},
   {"id": "seolyeon", "name": "설연향", "cat": "중식", "menu": "차돌짬뽕·유니짜장", "price": "", "addr": "국회대로76길 33 지하1층", "bldg": "중앙보훈회관", "zone": "alley", "naver": null, "src": "다이닝코드 58점", "q": ""},
@@ -115,10 +109,4 @@ window.RESTAURANTS = [
   {"id": "sawi", "name": "사위식당 여의도점", "cat": "한식", "menu": "낙곱새·손만두", "price": "", "addr": "주소 미확인 (건물 2층)", "bldg": "", "zone": "station", "naver": null, "src": "다이닝코드 ★4.7", "q": ""},
   {"id": "yugane", "name": "유가네손맛", "cat": "한식", "menu": "회덮밥·바지락칼국수·제육 (포장마차식)", "price": "", "addr": "KBS본관 맞은편 지하1층 (주소 미확인)", "bldg": "", "zone": "station", "naver": null, "src": "", "q": ""},
   {"id": "jeongdam", "name": "정담긴 추어탕", "cat": "한식", "menu": "추어탕", "price": "", "addr": "KBS 인근 (주소 미확인)", "bldg": "", "zone": "station", "naver": null, "src": "", "q": ""},
-  // ── 한국거래소 주변
-  {"id": "chilmi", "name": "칠미식당", "cat": "한식", "menu": "우렁추어탕·삼겹살", "price": "", "addr": "여의나루로 81 지하1층", "bldg": "파이낸셜빌딩 (거래소 맞은편)", "zone": "krx", "naver": null, "src": "", "q": ""},
-  {"id": "dailybrown", "name": "데일리브라운 한국거래소점", "cat": "양식", "menu": "브런치·샌드위치", "price": "", "addr": "여의나루로 76 신관 1층", "bldg": "한국거래소", "zone": "krx", "naver": null, "src": "", "q": ""},
-  {"id": "eurosand", "name": "유럽샌드위치", "cat": "분식·기타", "menu": "샌드위치", "price": "", "addr": "여의나루로 76", "bldg": "한국거래소", "zone": "krx", "naver": null, "src": "", "q": ""},
-  // ── 국회 경내
-  {"id": "library", "name": "국회도서관 구내식당", "cat": "분식·기타", "menu": "구내식당 (열람증 필요, 11:00~13:30)", "price": "5.5천", "addr": "의사당대로 1 지하1층", "bldg": "국회도서관", "zone": "west", "naver": null, "src": "", "q": ""},
 ];
