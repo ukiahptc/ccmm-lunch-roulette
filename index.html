@@ -4,107 +4,173 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>CCMM 점심 룰렛</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💖</text></svg>">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐰</text></svg>">
 <meta name="description" content="여의도 CCMM빌딩 주변(여의도공원 서측 ~ 국회의사당역) 점심 맛집 룰렛">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#ff5fa8; --bg2:#ff8fc9; --surface:#ffffff; --ink:#4a0f2e; --muted:#a8467a; --line:#ff3d8f;
-  --accent:#ff2d86; --accent-ink:#fff; --chip:#ffe3f0; --chip-on:#ff2d86; --chip-on-ink:#fff;
-  --ok:#c2185b; --warn:#b8860b; --shadow:6px 6px 0 #d81b74;
-  --w1:#ff9ccf;--w2:#ffd6ea;--w3:#ff6fae;--w4:#ffe9f4;--w5:#ffb3d9;--w6:#ff86bf;--w7:#fff0f7;--w8:#ffc2e2;
+  --bg:#fff6f9; --surface:#ffffff; --ink:#5a3648; --muted:#a97a90; --line:#f7cfe0;
+  --accent:#f27fa9; --accent-dk:#d9538a; --accent-ink:#fff; --chip:#ffe6ef; --chip-on:#f27fa9; --chip-on-ink:#fff;
+  --shadow:0 10px 28px rgba(242,127,169,.16);
+  --w1:#ffd6e5;--w2:#ffe7c7;--w3:#d9f3e6;--w4:#e9dcff;--w5:#fff4c2;--w6:#d6ecff;--w7:#ffe1ec;--w8:#fcd9ff;
 }
 *{box-sizing:border-box}
 html,body{margin:0}
 body{color:var(--ink);font-family:"Noto Sans KR",system-ui,-apple-system,sans-serif;line-height:1.55;-webkit-font-smoothing:antialiased;
   background:
-    radial-gradient(circle at 12% 18%, rgba(255,255,255,.28) 0 14px, transparent 15px),
-    radial-gradient(circle at 78% 6%, rgba(255,255,255,.22) 0 22px, transparent 23px),
-    radial-gradient(circle at 90% 60%, rgba(255,255,255,.18) 0 30px, transparent 31px),
-    radial-gradient(circle at 30% 85%, rgba(255,255,255,.2) 0 18px, transparent 19px),
-    radial-gradient(circle at 60% 40%, rgba(255,255,255,.12) 0 12px, transparent 13px),
-    linear-gradient(160deg, var(--bg2) 0%, var(--bg) 55%, #ff3d94 100%);
+    radial-gradient(circle at 15% 10%, #ffe4ee 0, transparent 34%),
+    radial-gradient(circle at 85% 20%, #fff0e6 0, transparent 30%),
+    radial-gradient(circle at 60% 90%, #ffe9f2 0, transparent 35%),
+    var(--bg);
   background-attachment:fixed}
-.wrap{max-width:1100px;margin:0 auto;padding:28px 16px 80px}
-header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:22px}
-h1{font-family:"Jua","Noto Sans KR",sans-serif;font-size:clamp(34px,5vw,54px);font-weight:400;letter-spacing:.01em;margin:0;line-height:1.1;color:#fff;
-  text-shadow:3px 3px 0 #c2185b, 0 0 24px rgba(255,255,255,.35)}
-h1 small{display:block;font-family:"Noto Sans KR",sans-serif;font-size:14px;font-weight:700;color:#fff;margin-top:8px;letter-spacing:0;text-shadow:none;opacity:.95}
-.stats{font-size:13px;color:#fff;text-align:right;background:rgba(255,255,255,.18);border:2px solid rgba(255,255,255,.5);border-radius:999px;padding:6px 14px}
-.stats b{color:#fff;font-size:15px}
+.wrap{max-width:1100px;margin:0 auto;padding:22px 16px 40px}
+header{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;margin-bottom:4px}
+.brand{display:flex;align-items:center;gap:12px}
+.brand .mascot{width:72px;height:72px;flex:none;filter:drop-shadow(0 4px 0 rgba(217,83,138,.15))}
+h1{font-family:"Jua","Noto Sans KR",sans-serif;font-size:clamp(30px,4.6vw,46px);font-weight:400;letter-spacing:.01em;margin:0;line-height:1.1;color:var(--accent-dk)}
+h1 small{display:block;font-family:"Noto Sans KR",sans-serif;font-size:13px;font-weight:700;color:var(--muted);margin-top:6px;letter-spacing:0}
+.stats{font-size:13px;color:var(--muted);text-align:right;background:#fff;border:2px solid var(--line);border-radius:999px;padding:6px 14px}
+.stats b{color:var(--accent-dk)}
+.village{display:block;width:100%;height:auto;margin:6px 0 14px}
 .grid{display:grid;grid-template-columns:minmax(0,1fr);gap:22px}
 @media(min-width:900px){.grid{grid-template-columns:420px minmax(0,1fr)}}
-.card{background:var(--surface);border:3px solid var(--line);border-radius:28px;padding:20px;box-shadow:var(--shadow)}
-.wheel-wrap{position:relative;width:min(100%,380px);aspect-ratio:1;margin:0 auto}
-canvas{width:100%;height:100%;display:block;border-radius:50%;box-shadow:0 0 0 6px #fff, 0 0 0 10px var(--line)}
-.pointer{position:absolute;top:-8px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:18px solid transparent;border-right:18px solid transparent;border-top:34px solid var(--accent);filter:drop-shadow(0 3px 0 #b3125f);z-index:2}
+.card{position:relative;background:var(--surface);border:2px solid var(--line);border-radius:26px;padding:20px;box-shadow:var(--shadow)}
+.peek{position:absolute;width:64px;height:64px;pointer-events:none}
+.peek.tr{top:-30px;right:18px}
+.peek.bl{bottom:-6px;left:-14px;transform:rotate(-12deg)}
+.wheel-wrap{position:relative;width:min(100%,380px);aspect-ratio:1;margin:10px auto 0}
+canvas{width:100%;height:100%;display:block;border-radius:50%;box-shadow:0 0 0 6px #fff, 0 0 0 9px var(--line)}
+.pointer{position:absolute;top:-8px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:16px solid transparent;border-right:16px solid transparent;border-top:32px solid var(--accent);filter:drop-shadow(0 2px 0 var(--accent-dk));z-index:2}
 .hub{position:absolute;inset:0;display:grid;place-items:center;pointer-events:none}
-.hub span{background:#fff;border:4px solid var(--accent);color:var(--accent);width:60px;height:60px;border-radius:50%;display:grid;place-items:center;font-family:"Jua",sans-serif;font-size:18px;box-shadow:0 0 0 4px #fff}
-.spin{display:block;width:100%;margin-top:20px;padding:16px;border:3px solid #b3125f;border-radius:999px;background:linear-gradient(180deg,#ff5fa8,#ff2d86);color:#fff;font-family:"Jua","Noto Sans KR",sans-serif;font-size:26px;cursor:pointer;letter-spacing:.03em;box-shadow:0 6px 0 #b3125f;transition:transform .08s, box-shadow .08s;text-shadow:1px 1px 0 #b3125f}
-.spin:active{transform:translateY(4px);box-shadow:0 2px 0 #b3125f}
+.hub span{background:#fff;border:4px solid var(--accent);color:var(--accent-dk);width:60px;height:60px;border-radius:50%;display:grid;place-items:center;font-family:"Jua",sans-serif;font-size:17px;box-shadow:0 0 0 4px #fff}
+.spin{display:block;width:100%;margin-top:20px;padding:15px;border:0;border-radius:999px;background:linear-gradient(180deg,#f9a8c9,#f27fa9);color:#fff;font-family:"Jua","Noto Sans KR",sans-serif;font-size:24px;cursor:pointer;letter-spacing:.03em;box-shadow:0 6px 0 #d9538a, var(--shadow);transition:transform .08s, box-shadow .08s}
+.spin:active{transform:translateY(4px);box-shadow:0 2px 0 #d9538a}
 .spin[disabled]{opacity:.6;cursor:not-allowed}
-.result{margin-top:18px;min-height:120px;border:3px dashed #ffb3d9;border-radius:22px;padding:16px;text-align:center;background:#fff7fb}
-.result.hit{border-style:solid;border-color:var(--accent);background:linear-gradient(180deg,#fff,#ffe9f4);animation:pop .4s cubic-bezier(.2,1.4,.4,1)}
-@keyframes pop{0%{transform:scale(.9) rotate(-2deg)}60%{transform:scale(1.04) rotate(1deg)}100%{transform:scale(1)}}
-.result .name{font-family:"Jua","Noto Sans KR",sans-serif;font-size:34px;letter-spacing:.01em;color:var(--accent);text-shadow:2px 2px 0 #ffd6ea}
+.result{margin-top:18px;min-height:120px;border:2px dashed var(--line);border-radius:22px;padding:16px;text-align:center;background:#fffafc}
+.result.hit{border-style:solid;border-color:var(--accent);background:linear-gradient(180deg,#fff,#fff0f5);animation:pop .4s cubic-bezier(.2,1.4,.4,1)}
+@keyframes pop{0%{transform:scale(.92) rotate(-1.5deg)}60%{transform:scale(1.03) rotate(1deg)}100%{transform:scale(1)}}
+.cheer{display:flex;justify-content:center;align-items:flex-end;gap:6px;margin:-4px 0 4px}
+.cheer svg{width:54px;height:54px}
+.cheer .bubble{font-family:"Jua",sans-serif;font-size:14px;color:var(--accent-dk);background:#fff;border:2px solid var(--line);border-radius:14px;padding:4px 10px;margin-bottom:22px;position:relative}
+.cheer .bubble:after{content:"";position:absolute;left:-8px;bottom:8px;border:6px solid transparent;border-right-color:var(--line)}
+.result .name{font-family:"Jua","Noto Sans KR",sans-serif;font-size:32px;letter-spacing:.01em;color:var(--accent-dk)}
 .result .meta{color:var(--muted);font-size:14px;margin-top:4px;font-weight:700}
 .result .addr{font-size:13px;margin-top:6px}
 .links{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:12px}
-.links a,.btn{display:inline-block;padding:9px 14px;border-radius:999px;border:2px solid var(--line);background:#fff;color:var(--accent);text-decoration:none;font-size:13px;font-weight:900;cursor:pointer;font-family:inherit}
+.links a,.btn{display:inline-block;padding:9px 14px;border-radius:999px;border:2px solid var(--line);background:#fff;color:var(--accent-dk);text-decoration:none;font-size:13px;font-weight:900;cursor:pointer;font-family:inherit}
 .links a.naver{background:#03c75a;color:#fff;border-color:#03c75a}
 .links a.kakao{background:#fee500;color:#191600;border-color:#fee500}
 .btn.ghost{background:#fff}
-.btn.danger{color:#b3261e;border-color:#f3b0b0}
-h2{font-family:"Jua","Noto Sans KR",sans-serif;font-size:22px;font-weight:400;margin:0 0 12px;display:flex;align-items:center;justify-content:space-between;gap:8px;color:var(--accent)}
+.btn.danger{color:#b3261e;border-color:#f3c5c5}
+h2{font-family:"Jua","Noto Sans KR",sans-serif;font-size:21px;font-weight:400;margin:0 0 12px;display:flex;align-items:center;justify-content:space-between;gap:8px;color:var(--accent-dk)}
 h2 .sub{font-family:"Noto Sans KR",sans-serif;font-weight:700;color:var(--muted);font-size:12px}
 .chips{display:flex;flex-wrap:wrap;gap:8px}
-.chip{padding:8px 14px;border-radius:999px;background:var(--chip);border:2px solid #ffb3d9;font-size:13px;font-weight:900;cursor:pointer;user-select:none;color:var(--accent)}
-.chip.on{background:var(--chip-on);color:var(--chip-on-ink);border-color:var(--chip-on);box-shadow:0 3px 0 #b3125f}
+.chip{padding:8px 14px;border-radius:999px;background:var(--chip);border:2px solid transparent;font-size:13px;font-weight:900;cursor:pointer;user-select:none;color:var(--accent-dk)}
+.chip.on{background:var(--chip-on);color:var(--chip-on-ink);box-shadow:0 3px 0 #d9538a}
 .row{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;font-size:14px;margin-top:14px;font-weight:700}
 .row label{display:flex;align-items:center;gap:6px;cursor:pointer}
 .row input[type=checkbox]{accent-color:var(--accent);width:17px;height:17px}
-.row input[type=number]{width:64px;padding:4px 6px;border:2px solid #ffb3d9;border-radius:10px;background:#fff;color:var(--ink);font:inherit;font-weight:700}
-.note{font-size:13px;color:var(--ink);background:#fff0f7;border:2px dashed #ffb3d9;border-radius:16px;padding:12px 14px;margin-top:14px;line-height:1.6}
-.note b{color:var(--accent)}
+.row input[type=number]{width:64px;padding:4px 6px;border:2px solid var(--line);border-radius:10px;background:#fff;color:var(--ink);font:inherit;font-weight:700}
+.note{font-size:13px;color:var(--ink);background:#fff3f7;border:2px dashed var(--line);border-radius:16px;padding:12px 14px;margin-top:14px;line-height:1.6}
+.note b{color:var(--accent-dk)}
 .badge{display:inline-block;font-size:11px;font-weight:900;padding:2px 8px;border-radius:999px;background:var(--chip);color:var(--muted);vertical-align:middle;margin-left:4px}
 .badge.ok{background:var(--accent);color:#fff}
 .badge.na{background:#fff3cd;color:#8a6d00}
 .badge.out{background:#fde2e2;color:#b3261e}
 table{width:100%;border-collapse:collapse;font-size:13px;margin-top:8px}
-th,td{text-align:left;padding:9px 8px;border-bottom:1px solid #ffd6ea;vertical-align:top}
-th{font-size:12px;color:var(--accent);font-weight:900;position:sticky;top:0;background:#fff0f7}
+th,td{text-align:left;padding:9px 8px;border-bottom:1px solid #ffe6ef;vertical-align:top}
+th{font-size:12px;color:var(--accent-dk);font-weight:900;position:sticky;top:0;background:#fff3f7}
 tr.off td{opacity:.42}
 td .nm{font-weight:900}
 td .sm{color:var(--muted);font-size:12px}
-td input.rate{width:58px;padding:3px 5px;border:2px solid #ffb3d9;border-radius:8px;background:#fff;color:var(--ink);font:inherit;font-size:13px;font-weight:700}
-td a{color:var(--accent);font-weight:700}
+td input.rate{width:58px;padding:3px 5px;border:2px solid var(--line);border-radius:8px;background:#fff;color:var(--ink);font:inherit;font-size:13px;font-weight:700}
+td a{color:var(--accent-dk);font-weight:700}
 td.map{white-space:nowrap}
-.tablewrap{max-height:70vh;overflow:auto;border:2px solid #ffb3d9;border-radius:16px;margin-top:10px}
+.tablewrap{max-height:70vh;overflow:auto;border:2px solid var(--line);border-radius:16px;margin-top:10px}
 .toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:12px}
-.toolbar input[type=search]{flex:1;min-width:160px;padding:10px 14px;border:2px solid #ffb3d9;border-radius:999px;background:#fff;color:var(--ink);font:inherit}
+.toolbar input[type=search]{flex:1;min-width:160px;padding:10px 14px;border:2px solid var(--line);border-radius:999px;background:#fff;color:var(--ink);font:inherit}
 .history{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
-.history span{font-size:12px;padding:4px 10px;border-radius:999px;background:var(--chip);color:var(--accent);font-weight:700}
-footer{margin-top:28px;font-size:12px;color:#fff;line-height:1.7;background:rgba(0,0,0,.12);border-radius:16px;padding:12px 16px}
+.history span{font-size:12px;padding:4px 10px;border-radius:999px;background:var(--chip);color:var(--accent-dk);font-weight:700}
+footer{margin-top:28px;font-size:12px;color:var(--muted);line-height:1.7;text-align:center}
 .sr{position:absolute;left:-9999px}
-@media(max-width:520px){.result .name{font-size:28px} th:nth-child(5),td:nth-child(5){display:none} .card{padding:16px;border-radius:22px;box-shadow:4px 4px 0 #d81b74}}
+@media(max-width:520px){.result .name{font-size:27px} th:nth-child(5),td:nth-child(5){display:none} .card{padding:16px;border-radius:22px} .brand .mascot{width:56px;height:56px} .peek{width:52px;height:52px} .peek.tr{top:-26px;right:12px}}
 </style>
 </head>
 <body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="bunny" viewBox="0 0 100 100">
+      <ellipse cx="37" cy="24" rx="9" ry="21" fill="#fff" stroke="#e8a6c0" stroke-width="2.5"/><ellipse cx="63" cy="24" rx="9" ry="21" fill="#fff" stroke="#e8a6c0" stroke-width="2.5"/>
+      <ellipse cx="37" cy="26" rx="4.5" ry="14" fill="#ffc4d9"/><ellipse cx="63" cy="26" rx="4.5" ry="14" fill="#ffc4d9"/>
+      <circle cx="50" cy="62" r="31" fill="#fff" stroke="#e8a6c0" stroke-width="2.5"/>
+      <circle cx="39" cy="59" r="3.2" fill="#5a3648"/><circle cx="61" cy="59" r="3.2" fill="#5a3648"/>
+      <circle cx="31" cy="69" r="5.5" fill="#ffc4d9"/><circle cx="69" cy="69" r="5.5" fill="#ffc4d9"/>
+      <ellipse cx="50" cy="66" rx="2.6" ry="2" fill="#f27fa9"/><path d="M46 70q4 4 8 0" stroke="#5a3648" stroke-width="2" fill="none" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="bear" viewBox="0 0 100 100">
+      <circle cx="26" cy="30" r="12" fill="#f6c9a8" stroke="#d9a07c" stroke-width="2.5"/><circle cx="74" cy="30" r="12" fill="#f6c9a8" stroke="#d9a07c" stroke-width="2.5"/>
+      <circle cx="26" cy="30" r="6" fill="#ffd9e6"/><circle cx="74" cy="30" r="6" fill="#ffd9e6"/>
+      <circle cx="50" cy="58" r="33" fill="#f6c9a8" stroke="#d9a07c" stroke-width="2.5"/>
+      <ellipse cx="50" cy="68" rx="14" ry="10" fill="#fff3e8"/>
+      <circle cx="38" cy="54" r="3.2" fill="#5a3648"/><circle cx="62" cy="54" r="3.2" fill="#5a3648"/>
+      <ellipse cx="50" cy="64" rx="4" ry="3" fill="#5a3648"/><path d="M45 71q5 4 10 0" stroke="#5a3648" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <circle cx="29" cy="64" r="5" fill="#ffc4d9" opacity=".9"/><circle cx="71" cy="64" r="5" fill="#ffc4d9" opacity=".9"/>
+    </symbol>
+    <symbol id="cat" viewBox="0 0 100 100">
+      <path d="M22 44 L18 12 L46 30Z" fill="#fff" stroke="#e8a6c0" stroke-width="2.5" stroke-linejoin="round"/><path d="M78 44 L82 12 L54 30Z" fill="#fff" stroke="#e8a6c0" stroke-width="2.5" stroke-linejoin="round"/>
+      <path d="M26 38 L24 20 L40 31Z" fill="#ffc4d9"/><path d="M74 38 L76 20 L60 31Z" fill="#ffc4d9"/>
+      <ellipse cx="50" cy="60" rx="34" ry="30" fill="#fff" stroke="#e8a6c0" stroke-width="2.5"/>
+      <circle cx="38" cy="56" r="3.2" fill="#5a3648"/><circle cx="62" cy="56" r="3.2" fill="#5a3648"/>
+      <path d="M47 65 l3 3 l3 -3z" fill="#f27fa9"/><path d="M44 71q6 5 12 0" stroke="#5a3648" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <path d="M12 60h18M12 68h18M70 60h18M70 68h18" stroke="#e8a6c0" stroke-width="2" stroke-linecap="round"/>
+      <circle cx="30" cy="66" r="5" fill="#ffc4d9" opacity=".9"/><circle cx="70" cy="66" r="5" fill="#ffc4d9" opacity=".9"/>
+    </symbol>
+    <symbol id="house" viewBox="0 0 100 100">
+      <path d="M12 48 L50 16 L88 48Z" fill="#f9a8c9" stroke="#e8a6c0" stroke-width="2.5" stroke-linejoin="round"/>
+      <rect x="20" y="48" width="60" height="42" rx="4" fill="#fff" stroke="#e8a6c0" stroke-width="2.5"/>
+      <rect x="42" y="62" width="16" height="28" rx="6" fill="#f27fa9"/><circle cx="54" cy="77" r="1.8" fill="#fff"/>
+      <rect x="26" y="58" width="11" height="11" rx="2" fill="#d6ecff" stroke="#e8a6c0" stroke-width="2"/><rect x="63" y="58" width="11" height="11" rx="2" fill="#d6ecff" stroke="#e8a6c0" stroke-width="2"/>
+      <rect x="62" y="22" width="9" height="14" rx="2" fill="#fff" stroke="#e8a6c0" stroke-width="2"/>
+    </symbol>
+    <symbol id="tree" viewBox="0 0 100 100">
+      <rect x="45" y="60" width="10" height="30" rx="3" fill="#d9a07c"/>
+      <circle cx="50" cy="44" r="24" fill="#ffd6e5" stroke="#e8a6c0" stroke-width="2.5"/><circle cx="34" cy="54" r="15" fill="#ffe1ec" stroke="#e8a6c0" stroke-width="2.5"/><circle cx="66" cy="54" r="15" fill="#ffe1ec" stroke="#e8a6c0" stroke-width="2.5"/>
+      <circle cx="44" cy="40" r="2.5" fill="#f27fa9"/><circle cx="58" cy="48" r="2.5" fill="#f27fa9"/><circle cx="38" cy="56" r="2.5" fill="#f27fa9"/>
+    </symbol>
+    <symbol id="cloud" viewBox="0 0 100 60">
+      <path d="M22 50h56a14 14 0 0 0 0-28a20 20 0 0 0-38-6a16 16 0 0 0-18 34z" fill="#fff" stroke="#f7cfe0" stroke-width="2.5"/>
+    </symbol>
+    <symbol id="heart" viewBox="0 0 100 100"><path d="M50 88 L14 50a20 20 0 0 1 36-24a20 20 0 0 1 36 24z" fill="#f9a8c9"/></symbol>
+  </defs>
+</svg>
 <div class="wrap">
 <header>
-  <h1>CCMM 점심 룰렛 <small>여의도공원 서측 · 국회의사당역까지 · 네이버 별점 4.5 기준</small></h1>
+  <div class="brand">
+    <svg class="mascot" aria-hidden="true"><use href="#bunny"/></svg>
+    <h1>CCMM 점심 룰렛 <small>여의도공원 서측 · 국회의사당역까지 · 네이버 별점 4.5 기준</small></h1>
+  </div>
   <div class="stats" id="stats"></div>
 </header>
+<svg class="village" viewBox="0 0 1000 120" preserveAspectRatio="xMidYMax meet" aria-hidden="true">
+  <use href="#cloud" x="60" y="4" width="90" height="54"/><use href="#cloud" x="700" y="0" width="110" height="66"/><use href="#cloud" x="880" y="18" width="70" height="42"/>
+  <ellipse cx="180" cy="150" rx="320" ry="70" fill="#ffe6ef"/><ellipse cx="820" cy="150" rx="340" ry="75" fill="#ffe1ec"/><ellipse cx="500" cy="165" rx="300" ry="70" fill="#fff0f5"/>
+  <use href="#tree" x="20" y="40" width="70" height="70"/><use href="#house" x="110" y="30" width="80" height="80"/><use href="#tree" x="200" y="48" width="60" height="60"/>
+  <use href="#bear" x="285" y="60" width="50" height="50"/><use href="#heart" x="333" y="52" width="16" height="16"/>
+  <use href="#house" x="380" y="24" width="90" height="90"/><use href="#tree" x="470" y="44" width="66" height="66"/>
+  <use href="#cat" x="560" y="62" width="48" height="48"/><use href="#bunny" x="615" y="58" width="52" height="52"/><use href="#heart" x="668" y="50" width="14" height="14"/>
+  <use href="#tree" x="700" y="40" width="72" height="72"/><use href="#house" x="790" y="36" width="74" height="74"/><use href="#tree" x="880" y="50" width="58" height="58"/><use href="#tree" x="940" y="60" width="48" height="48"/>
+</svg>
 
 <div class="grid">
   <section class="card">
+    <svg class="peek tr" aria-hidden="true"><use href="#bear"/></svg>
     <div class="wheel-wrap">
       <div class="pointer" aria-hidden="true"></div>
       <canvas id="wheel" width="760" height="760" aria-label="점심 룰렛"></canvas>
       <div class="hub"><span>GO!</span></div>
     </div>
-    <button class="spin" id="spin">💖 룰렛 돌리기!</button>
+    <button class="spin" id="spin">🐰 룰렛 돌리기!</button>
     <div class="result" id="result" aria-live="polite">
       <div class="meta">버튼을 누르면 오늘의 점심이 정해집니다.</div>
     </div>
@@ -112,6 +178,7 @@ footer{margin-top:28px;font-size:12px;color:#fff;line-height:1.7;background:rgba
   </section>
 
   <section class="card">
+    <svg class="peek tr" aria-hidden="true"><use href="#cat"/></svg>
     <h2>필터 <span class="sub" id="poolCount"></span></h2>
     <div class="chips" id="catChips"></div>
     <div class="row" id="zoneRow"></div>
@@ -219,8 +286,8 @@ footer{margin-top:28px;font-size:12px;color:#fff;line-height:1.7;background:rgba
       const a0=angle+i*step, a1=a0+step;
       ctx.beginPath(); ctx.moveTo(cx,cy); ctx.arc(cx,cy,R-4,a0,a1); ctx.closePath();
       ctx.fillStyle=colors[i%colors.length]; if(n%colors.length===1 && i===n-1) ctx.fillStyle=colors[(i+3)%colors.length];
-      ctx.fill(); ctx.strokeStyle='#ffffff'; ctx.lineWidth=3; ctx.stroke();
-      ctx.save(); ctx.translate(cx,cy); const mid=a0+step/2, left=Math.cos(mid)<0; ctx.rotate(left?mid+Math.PI:mid); ctx.textAlign=left?'left':'right'; ctx.fillStyle='#4a0f2e';
+      ctx.fill(); ctx.strokeStyle='#ffffff'; ctx.lineWidth=2.5; ctx.stroke();
+      ctx.save(); ctx.translate(cx,cy); const mid=a0+step/2, left=Math.cos(mid)<0; ctx.rotate(left?mid+Math.PI:mid); ctx.textAlign=left?'left':'right'; ctx.fillStyle='#5a3648';
       const fs = n>60?13:n>40?15:n>28?18:n>18?22:26; ctx.font=`700 ${fs}px Noto Sans KR, sans-serif`;
       let t=items[i].name; const maxW=R*0.62; while(ctx.measureText(t).width>maxW && t.length>2) t=t.slice(0,-1);
       if(t!==items[i].name) t=t.replace(/\s+$/,'')+'…';
@@ -255,7 +322,10 @@ footer{margin-top:28px;font-size:12px;color:#fff;line-height:1.7;background:rgba
     hist=[d.id,...hist.filter(x=>x!==d.id)].slice(0,10); save(LS.hist,hist);
     const r=ratingOf(d);
     const el=document.getElementById('result'); el.className='result hit';
+    const cheerer=['bunny','bear','cat'][Math.floor(Math.random()*3)];
+    const lines=['오늘은 여기!','맛있게 먹고 와~','여기 어때?','고민 끝!','출발~'];
     el.innerHTML=`
+      <div class="cheer"><svg aria-hidden="true"><use href="#${cheerer}"/></svg><span class="bubble">${lines[Math.floor(Math.random()*lines.length)]}</span></div>
       <div class="name">${esc(d.name)}</div>
       <div class="meta">${esc(d.cat)} · ${esc(d.menu||'')}${d.price?' · '+esc(d.price):''}</div>
       <div class="addr">${esc(d.addr||'')}${d.bldg?' <span class="badge">'+esc(d.bldg)+'</span>':''}
