@@ -76,6 +76,19 @@ function pickCandidate(row, list) {
   return bestScore >= 4 ? best : null;
 }
 
+const DEBUG_DIR = path.join(ROOT, 'debug');
+function dumpDebug(id, html) {
+  try { fs.mkdirSync(DEBUG_DIR, { recursive: true }); const f = path.join(DEBUG_DIR, `${id}.html`); fs.writeFileSync(f, html); return path.relative(process.cwd(), f); }
+  catch { return null; }
+}
+// 캡차 판정: 검색 데이터(__APOLLO_STATE__)가 있으면 캡차가 아니다.
+// 그 외에는 주소창에 captcha 가 있거나, 화면에 보이는 글자에 보안 인증 문구가 있을 때만 캡차로 본다.
+function looksLikeCaptcha(url, html, text) {
+  if (/__APOLLO_STATE__/.test(html)) return false;
+  if (/captcha/i.test(url)) return true;
+  return /보안\s*인증|자동\s*입력\s*방지|비정상적인\s*접근|접근이\s*제한|잠시\s*후\s*다시/.test(text);
+}
+
 function extractApollo(html) {
   const m = html.match(/window\.__APOLLO_STATE__\s*=\s*(\{[\s\S]*?\});\s*(?:<\/script>|window\.)/);
   if (!m) return null;
@@ -125,7 +138,9 @@ const browser = await chromium.launchPersistentContext(PROFILE, {
   locale: 'ko-KR',
   viewport: { width: 420, height: 900 },
   userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1',
+  args: ['--disable-blink-features=AutomationControlled'],
 });
+await browser.addInitScript(() => { Object.defineProperty(navigator, 'webdriver', { get: () => undefined }); });
 const page = await browser.newPage();
 const report = { ranAt: new Date().toISOString(), updated: [], noScore: [], notFound: [], failed: [] };
 
@@ -138,15 +153,29 @@ for (const [i, r] of targets.entries()) {
     await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 30000 });
     await page.waitForTimeout(1200);
     let html = await page.content();
-    if (/captcha|보안\s*인증|자동입력\s*방지/i.test(html)) {
-      console.log('캡차 감지. --headful 로 실행해 직접 풀고 다시 시도하세요.');
-      report.failed.push({ id: d.id, name: d.name, reason: 'captcha', url });
-      if (!HEADFUL) break;
-      await page.waitForFunction(() => !/captcha|보안 인증/i.test(document.body.innerText), null, { timeout: 180000 }).catch(() => {});
+    let text = await page.evaluate(() => (document.body && document.body.innerText) || '').catch(() => '');
+    if (looksLikeCaptcha(page.url(), html, text)) {
+      const dump = dumpDebug(d.id, html);
+      if (!HEADFUL) {
+        console.log(`보안 인증 페이지로 보임 (${page.url()}). 화면 사본: ${dump}`);
+        console.log('  → node scripts/fetch-naver-ratings.mjs --headful 로 창을 띄워 인증을 직접 통과하면 이어서 진행됩니다.');
+        report.failed.push({ id: d.id, name: d.name, reason: 'captcha', url, finalUrl: page.url(), dump });
+        break;
+      }
+      console.log('보안 인증 페이지. 브라우저 창에서 직접 통과해 주세요 (최대 3분 대기) …');
+      await page.waitForFunction(() => /__APOLLO_STATE__/.test(document.documentElement.outerHTML), null, { timeout: 180000 }).catch(() => {});
+      await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 30000 });
+      await page.waitForTimeout(1200);
       html = await page.content();
     }
     const state = extractApollo(html);
     const list = state ? listFromApollo(state) : [];
+    if (!state) {
+      const dump = dumpDebug(d.id, html);
+      console.log(`검색 데이터(__APOLLO_STATE__)를 찾지 못함. 화면 사본: ${dump}`);
+      report.failed.push({ id: d.id, name: d.name, reason: 'no-apollo-state', url, finalUrl: page.url(), dump });
+      await sleep(DELAY_MS); continue;
+    }
     const c = pickCandidate(d, list);
     if (!c) {
       console.log(`후보 못 찾음 (검색 결과 ${list.length}건)`);
