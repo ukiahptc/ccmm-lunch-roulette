@@ -4,8 +4,21 @@
 점심 후보를 룰렛으로 뽑고, 다녀온 뒤 **KMAC 별점**을 남기는 정적 웹페이지.
 서버 없이 정적 파일로 동작하고, 평가 저장소로 구글 시트(Apps Script 웹앱)를 쓴다.
 
-- 페이지: https://ukiahptc.github.io/ccmm-lunch-roulette/
+- 점심 룰렛: https://ukiahptc.github.io/ccmm-lunch-roulette/
+- 디저트 룰렛: https://ukiahptc.github.io/ccmm-lunch-roulette/cafe/ (같은 범위의 카페·디저트, 갈색 곰돌이 테마)
 - 로컬에서 보려면 `index.html` 을 브라우저로 열면 된다.
+
+## 파일 구성
+
+| 파일 | 역할 |
+|---|---|
+| `index.html` / `data.js` | 점심 룰렛 페이지와 식당 후보 |
+| `cafe/index.html` / `cafe/data.js` | 디저트 룰렛 페이지와 카페 후보 (id 는 `cafe-` 로 시작) |
+| `app.js` / `app.css` | 두 페이지가 같이 쓰는 로직과 구조 CSS. 기능 수정은 여기 한 곳만 |
+| `config.js` | 구글 시트 웹앱 주소 (두 페이지 공용) |
+| `apps-script/Code.gs` | 시트 쪽 코드 |
+
+두 페이지의 평가는 같은 시트 `reviews` 탭에 쌓이고, 각 페이지는 자기 후보 id 의 평가만 보여 준다.
 
 ## 화면 구성
 
@@ -51,7 +64,7 @@ Code.gs 를 수정한 뒤에는 **배포 → 배포 관리 → 연필 → 버전
 `sheetApi` 가 비어 있으면 평가는 각자 브라우저(localStorage)에만 저장된다.
 이때는 **평가 내보내기**로 받은 JSON 을 `reviews.js` 의 대괄호 안에 붙여 넣고 커밋하면 공유된다.
 
-## 후보 목록 수정 (`data.js`)
+## 후보 목록 수정 (`data.js`, `cafe/data.js`)
 
 식당 한 곳이 한 줄이다. GitHub 웹에서 연필 아이콘으로 열어 고치고 Commit changes 하면 1~2분 뒤 반영된다.
 
@@ -63,7 +76,7 @@ Code.gs 를 수정한 뒤에는 **배포 → 배포 관리 → 연필 → 버전
 - 삭제: 그 줄을 통째로 지운다.
 - 룰렛에서만 빼고 목록엔 남기기: 줄 끝 `"q":""` 뒤에 `,"closed":true`.
 - 추가: 아무 줄이나 복사해서 `id`(영문, 중복 금지)·이름·분류·주소·구역을 바꾼다.
-- `cat`: 한식 · 일식 · 중식 · 양식 · 아시안 · 분식·기타
+- `cat`: 점심은 한식 · 일식 · 중식 · 양식 · 아시안 · 분식·기타, 디저트는 커피 · 디저트 · 베이커리 · 빙수·아이스크림 · 차·음료 (새 분류를 쓰면 칩이 자동으로 생긴다)
 - `zone`: `ccmm` CCMM빌딩 안 · `bank` 은행로 · `alley` 국회대로 골목 · `main` 국회대로 본선 · `station` 국회의사당역 출구
 - `src`: 비고(휴무일, 참고 정보). 화면에 그대로 표시.
 - `q`: 지도 검색어. 비우면 `상호 + 여의도`.

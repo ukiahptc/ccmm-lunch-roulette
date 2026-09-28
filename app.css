@@ -1,0 +1,134 @@
+/* CCMM 룰렛 공통 구조 CSS. 색·배경은 각 페이지의 :root 토큰과 body 배경에서 정한다. */
+*{box-sizing:border-box}
+html,body{margin:0}
+body{color:var(--ink);font-family:"Noto Sans KR",system-ui,-apple-system,sans-serif;line-height:1.55;-webkit-font-smoothing:antialiased;background:var(--bg)}
+.wrap{max-width:1100px;margin:0 auto;padding:22px 16px 40px}
+header{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;margin-bottom:4px}
+.brand{display:flex;align-items:center;gap:12px}
+.brand .mascot{width:72px;height:72px;flex:none;filter:drop-shadow(0 4px 0 rgba(217,83,138,.15))}
+h1{font-family:"Jua","Noto Sans KR",sans-serif;font-size:clamp(30px,4.6vw,46px);font-weight:400;letter-spacing:.01em;margin:0;line-height:1.1;color:var(--accent-dk)}
+h1 small{display:block;font-family:"Noto Sans KR",sans-serif;font-size:13px;font-weight:700;color:var(--muted);margin-top:6px;letter-spacing:0}
+.stats{font-size:13px;color:var(--muted);text-align:right;background:#fff;border:2px solid var(--line);border-radius:999px;padding:6px 14px}
+.stats b{color:var(--accent-dk)}
+.village{display:block;width:100%;height:auto;margin:6px 0 14px}
+.grid{display:grid;grid-template-columns:minmax(0,1fr);gap:22px}
+@media(min-width:900px){.grid{grid-template-columns:420px minmax(0,1fr)}}
+.card{position:relative;background:var(--surface);border:2px solid var(--line);border-radius:26px;padding:20px;box-shadow:var(--shadow)}
+.peek{position:absolute;width:64px;height:64px;pointer-events:none}
+.peek.tr{top:-30px;right:18px}
+.peek.bl{bottom:-6px;left:-14px;transform:rotate(-12deg)}
+.wheel-wrap{position:relative;width:min(100%,380px);aspect-ratio:1;margin:10px auto 0}
+canvas{width:100%;height:100%;display:block;border-radius:50%;box-shadow:0 0 0 6px #fff, 0 0 0 9px var(--line)}
+.pointer{position:absolute;top:-8px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:16px solid transparent;border-right:16px solid transparent;border-top:32px solid var(--accent);filter:drop-shadow(0 2px 0 var(--accent-dk));z-index:2}
+.hub{position:absolute;inset:0;display:grid;place-items:center;pointer-events:none}
+.hub span{background:#fff;border:4px solid var(--accent);color:var(--accent-dk);width:60px;height:60px;border-radius:50%;display:grid;place-items:center;font-family:"Jua",sans-serif;font-size:17px;box-shadow:0 0 0 4px #fff}
+.spin{display:block;width:100%;margin-top:20px;padding:15px;border:0;border-radius:999px;background:linear-gradient(180deg,#f9a8c9,#f27fa9);color:#fff;font-family:"Jua","Noto Sans KR",sans-serif;font-size:24px;cursor:pointer;letter-spacing:.03em;box-shadow:0 6px 0 #d9538a, var(--shadow);transition:transform .08s, box-shadow .08s}
+.spin:active{transform:translateY(4px);box-shadow:0 2px 0 #d9538a}
+.spin[disabled]{opacity:.6;cursor:not-allowed}
+.result{margin-top:18px;min-height:120px;border:2px dashed var(--line);border-radius:22px;padding:16px;text-align:center;background:#fffafc}
+.result.hit{border-style:solid;border-color:var(--accent);background:linear-gradient(180deg,#fff,#fff0f5);animation:pop .4s cubic-bezier(.2,1.4,.4,1)}
+@keyframes pop{0%{transform:scale(.92) rotate(-1.5deg)}60%{transform:scale(1.03) rotate(1deg)}100%{transform:scale(1)}}
+.cheer{display:flex;justify-content:center;align-items:flex-end;gap:6px;margin:-4px 0 4px}
+.cheer svg{width:54px;height:54px}
+.cheer .bubble{font-family:"Jua",sans-serif;font-size:14px;color:var(--accent-dk);background:#fff;border:2px solid var(--line);border-radius:14px;padding:4px 10px;margin-bottom:22px;position:relative}
+.cheer .bubble:after{content:"";position:absolute;left:-8px;bottom:8px;border:6px solid transparent;border-right-color:var(--line)}
+.result .name{font-family:"Jua","Noto Sans KR",sans-serif;font-size:32px;letter-spacing:.01em;color:var(--accent-dk)}
+.result .meta{color:var(--muted);font-size:14px;margin-top:4px;font-weight:700}
+.result .addr{font-size:13px;margin-top:6px}
+.links{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:12px}
+.links a,.btn{display:inline-block;padding:9px 14px;border-radius:999px;border:2px solid var(--line);background:#fff;color:var(--accent-dk);text-decoration:none;font-size:13px;font-weight:900;cursor:pointer;font-family:inherit}
+.links a.naver{background:#03c75a;color:#fff;border-color:#03c75a}
+.links a.kakao{background:#fee500;color:#191600;border-color:#fee500}
+.btn.ghost{background:#fff}
+.btn.danger{color:#b3261e;border-color:#f3c5c5}
+h2{font-family:"Jua","Noto Sans KR",sans-serif;font-size:21px;font-weight:400;margin:0 0 12px;display:flex;align-items:center;justify-content:space-between;gap:8px;color:var(--accent-dk)}
+h2 .sub{font-family:"Noto Sans KR",sans-serif;font-weight:700;color:var(--muted);font-size:12px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{padding:8px 14px;border-radius:999px;background:var(--chip);border:2px solid transparent;font-size:13px;font-weight:900;cursor:pointer;user-select:none;color:var(--accent-dk)}
+.chip.on{background:var(--chip-on);color:var(--chip-on-ink);box-shadow:0 3px 0 #d9538a}
+.row{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;font-size:14px;margin-top:14px;font-weight:700}
+.row label{display:flex;align-items:center;gap:6px;cursor:pointer}
+.row input[type=checkbox]{accent-color:var(--accent);width:17px;height:17px}
+.row input[type=number]{width:64px;padding:4px 6px;border:2px solid var(--line);border-radius:10px;background:#fff;color:var(--ink);font:inherit;font-weight:700}
+.note{font-size:13px;color:var(--ink);background:#fff3f7;border:2px dashed var(--line);border-radius:16px;padding:12px 14px;margin-top:14px;line-height:1.6}
+.note b{color:var(--accent-dk)}
+.badge{display:inline-block;font-size:11px;font-weight:900;padding:2px 8px;border-radius:999px;background:var(--chip);color:var(--muted);vertical-align:middle;margin-left:4px}
+.badge.ok{background:var(--accent);color:#fff}
+.badge.na{background:#fff3cd;color:#8a6d00}
+.badge.out{background:#fde2e2;color:#b3261e}
+table{width:100%;border-collapse:collapse;font-size:13px;margin-top:8px}
+th,td{text-align:left;padding:9px 8px;border-bottom:1px solid #ffe6ef;vertical-align:top}
+th{font-size:12px;color:var(--accent-dk);font-weight:900;position:sticky;top:0;background:#fff3f7}
+tr.off td{opacity:.42}
+td .nm{font-weight:900}
+td .sm{color:var(--muted);font-size:12px}
+td input.rate{width:58px;padding:3px 5px;border:2px solid var(--line);border-radius:8px;background:#fff;color:var(--ink);font:inherit;font-size:13px;font-weight:700}
+td a{color:var(--accent-dk);font-weight:700}
+td.map{white-space:nowrap}
+.tablewrap{max-height:70vh;overflow:auto;border:2px solid var(--line);border-radius:16px;margin-top:10px}
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:12px}
+.toolbar input[type=search]{flex:1;min-width:160px;padding:10px 14px;border:2px solid var(--line);border-radius:999px;background:#fff;color:var(--ink);font:inherit}
+.history{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.history span{font-size:12px;padding:4px 10px;border-radius:999px;background:var(--chip);color:var(--accent-dk);font-weight:700}
+footer{margin-top:28px;font-size:12px;color:var(--muted);line-height:1.7;text-align:center}
+.sr{position:absolute;left:-9999px}
+@media(max-width:520px){.result .name{font-size:27px} th:nth-child(5),td:nth-child(5){display:none} .card{padding:16px;border-radius:22px} .brand .mascot{width:56px;height:56px} .peek{width:52px;height:52px} .peek.tr{top:-26px;right:12px}}
+
+/* ── 레이아웃 분리 · 팝업 · KMAC 별점 */
+.grid{grid-template-columns:minmax(0,1fr)}
+@media(min-width:900px){.grid{grid-template-columns:400px minmax(0,1fr)}}
+.full{margin-top:22px}
+.fgroup{margin-top:14px;padding-top:12px;border-top:1px dashed var(--line)}
+.fgroup:first-of-type{margin-top:0;padding-top:0;border-top:0}
+.fgroup .lbl{font-size:12px;font-weight:900;color:var(--muted);margin-bottom:8px;display:flex;justify-content:space-between;align-items:center}
+.fgroup .lbl button{font:inherit;font-size:11px;font-weight:900;color:var(--accent-dk);background:#fff;border:1px solid var(--line);border-radius:999px;padding:2px 9px;cursor:pointer;margin-left:6px}
+.zones{display:grid;grid-template-columns:1fr;gap:6px 14px;font-size:13px;font-weight:700}
+@media(min-width:560px){.zones{grid-template-columns:1fr 1fr}}
+.zones label{display:flex;align-items:center;gap:6px;cursor:pointer}
+.zones input{accent-color:var(--accent);width:16px;height:16px}
+select{font:inherit;font-weight:700;padding:5px 8px;border:2px solid var(--line);border-radius:10px;background:#fff;color:var(--ink)}
+.summary{margin-top:14px;background:#fff3f7;border-radius:14px;padding:10px 14px;font-size:13px;font-weight:700;color:var(--accent-dk);display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.summary .cnt{font-family:"Jua",sans-serif;font-size:20px}
+/* 팝업 */
+.modal{position:fixed;inset:0;background:rgba(90,54,72,.35);display:none;align-items:center;justify-content:center;padding:16px;z-index:50;backdrop-filter:blur(2px)}
+.modal.open{display:flex}
+.dialog{background:#fff;border:2px solid var(--line);border-radius:26px;box-shadow:0 20px 60px rgba(217,83,138,.25);width:min(560px,100%);max-height:92vh;overflow:auto;padding:22px 20px 18px;position:relative;animation:pop .35s cubic-bezier(.2,1.4,.4,1)}
+.dialog .x{position:absolute;top:10px;right:12px;border:0;background:var(--chip);color:var(--accent-dk);width:34px;height:34px;border-radius:50%;font-size:18px;font-weight:900;cursor:pointer}
+.dialog h3{font-family:"Jua",sans-serif;font-weight:400;font-size:20px;color:var(--accent-dk);margin:0 0 10px}
+.result-body{text-align:center}
+.result-body .name{font-family:"Jua","Noto Sans KR",sans-serif;font-size:34px;color:var(--accent-dk);line-height:1.15}
+.result-body .meta{color:var(--muted);font-size:14px;margin-top:6px;font-weight:700}
+.result-body .addr{font-size:13px;margin-top:6px}
+.kmac{display:inline-flex;align-items:center;gap:6px;background:#fff3f7;border:1px solid var(--line);border-radius:999px;padding:4px 10px;font-size:12px;font-weight:900;color:var(--accent-dk);margin-top:10px}
+.kmac .st{color:#f5a623;letter-spacing:-1px}
+.actions{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:14px}
+.btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+/* 별점 입력 */
+.rate-row{display:grid;grid-template-columns:64px 1fr 48px;align-items:center;gap:10px;margin-top:10px}
+.rate-row .k{font-weight:900;font-size:14px}
+.rate-row .v{font-weight:900;color:var(--accent-dk);text-align:right;font-size:14px}
+.stars{display:flex;gap:4px}
+.star{position:relative;width:34px;height:34px;flex:none}
+.star svg{width:100%;height:100%;display:block}
+.star .half{position:absolute;top:0;bottom:0;width:50%;cursor:pointer;background:transparent;border:0;padding:0}
+.star .half.l{left:0}.star .half.r{right:0}
+.stars.small .star{width:16px;height:16px}
+.field{margin-top:12px}
+.field label{display:block;font-size:12px;font-weight:900;color:var(--muted);margin-bottom:6px}
+.field input[type=text],.field textarea{width:100%;padding:9px 12px;border:2px solid var(--line);border-radius:12px;font:inherit;color:var(--ink);background:#fff}
+.field textarea{min-height:70px;resize:vertical}
+.seg{display:inline-flex;border:2px solid var(--line);border-radius:999px;overflow:hidden}
+.seg button{font:inherit;font-weight:900;padding:7px 16px;border:0;background:#fff;color:var(--muted);cursor:pointer}
+.seg button.on{background:var(--accent);color:#fff}
+.reviews{margin-top:14px;border-top:1px dashed var(--line);padding-top:10px}
+.review{font-size:13px;padding:8px 10px;border-radius:12px;background:#fffafc;border:1px solid #ffe6ef;margin-top:6px;display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
+.review .who{font-weight:900;color:var(--accent-dk)}
+.review .sm{color:var(--muted);font-size:12px}
+.review button{font:inherit;font-size:11px;border:1px solid #f3c5c5;color:#b3261e;background:#fff;border-radius:999px;padding:2px 8px;cursor:pointer;flex:none}
+td .kmac{margin-top:2px}
+td .btn{padding:5px 10px;font-size:12px}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--accent-dk);color:#fff;padding:10px 16px;border-radius:999px;font-weight:900;font-size:13px;display:none;z-index:60}
+.toast.show{display:block}
+
+.nav{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+.nav a{display:inline-block;padding:6px 12px;border-radius:999px;border:2px solid var(--line);background:#fff;color:var(--accent-dk);text-decoration:none;font-size:13px;font-weight:900}
