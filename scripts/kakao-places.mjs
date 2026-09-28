@@ -17,7 +17,7 @@ if (!KEY) { console.error('KAKAO_REST_API_KEY 환경변수가 필요합니다.')
 const args = process.argv.slice(2);
 const opt = (n, d) => { const i = args.indexOf(n); return i >= 0 ? args[i + 1] : d; };
 const TYPE = opt('--type', 'cafe');                       // cafe | food
-const RECT = opt('--rect', '126.9120,37.5215,126.9235,37.5340').split(',').map(Number); // 대략 국회~여의도공원 서측
+const RECT = opt('--rect', '126.9120,37.5215,126.9265,37.5345').split(',').map(Number); // 대략 국회~여의도공원 서측
 const OUT  = opt('--out', TYPE === 'cafe' ? 'cafe/kakao-candidates.js' : 'kakao-candidates.js');
 const ALL  = args.includes('--all');
 

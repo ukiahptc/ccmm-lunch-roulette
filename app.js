@@ -152,7 +152,7 @@
       ctx.fillStyle=colors[i%colors.length]; if(n%colors.length===1 && i===n-1) ctx.fillStyle=colors[(i+3)%colors.length];
       ctx.fill(); ctx.strokeStyle='#ffffff'; ctx.lineWidth=2.5; ctx.stroke();
       ctx.save(); ctx.translate(cx,cy); const mid=a0+step/2, left=Math.cos(mid)<0; ctx.rotate(left?mid+Math.PI:mid); ctx.textAlign=left?'left':'right'; ctx.fillStyle='#5a3648';
-      const fs = n>60?13:n>40?15:n>28?18:n>18?22:n>8?26:30; ctx.font=`700 ${fs}px Noto Sans KR, sans-serif`;
+      const fs = n>90?11:n>60?13:n>40?15:n>28?18:n>18?22:n>8?26:30; ctx.font=`700 ${fs}px Noto Sans KR, sans-serif`;
       let t=items[i].name; const maxW=R*0.62; while(ctx.measureText(t).width>maxW && t.length>2) t=t.slice(0,-1);
       if(t!==items[i].name) t=t.replace(/\s+$/,'')+'…';
       ctx.fillText(t,left?-(R-26):R-26,fs*0.36); ctx.restore();
