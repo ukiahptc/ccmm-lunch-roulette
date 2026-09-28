@@ -81,4 +81,17 @@ Code.gs 를 수정한 뒤에는 **배포 → 배포 관리 → 연필 → 버전
 - `src`: 비고(휴무일, 참고 정보). 화면에 그대로 표시.
 - `q`: 지도 검색어. 비우면 `상호 + 여의도`.
 
+### 후보를 한꺼번에 뽑기 (`scripts/kakao-places.mjs`)
+
+카카오맵 API 로 서여의도 범위 안의 카페(또는 식당)를 전부 조회해 `data.js` 형식의 초안 파일을 만든다.
+Node.js 18 이상, 카카오 REST API 키(https://developers.kakao.com → 앱 키)가 필요하다.
+
+```powershell
+$env:KAKAO_REST_API_KEY="발급받은키"; node scripts/kakao-places.mjs --type cafe   # → cafe/kakao-candidates.js
+$env:KAKAO_REST_API_KEY="발급받은키"; node scripts/kakao-places.mjs --type food   # → kakao-candidates.js
+```
+
+결과 파일을 열어 필요한 줄만 `cafe/data.js` / `data.js` 에 붙여 넣는다. 도로명으로 구역을 자동 추정하며,
+못 정한 곳은 `zone:"unknown"` 으로 남으니 직접 골라 준다. 범위는 `--rect minLon,minLat,maxLon,maxLat` 로 조정한다.
+
 배포 반영은 커밋 후 보통 1~2분. 옛 화면이 보이면 Ctrl+F5 (맥 Cmd+Shift+R).
