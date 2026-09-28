@@ -278,7 +278,7 @@ td .btn{padding:5px 10px;font-size:12px}
 </div>
 
 <section class="card full">
-  <h2>후보지 목록 <span class="sub">체크를 끄면 룰렛에서 빠짐 · "평가"로 KMAC 별점 입력</span></h2>
+  <h2>후보지 목록 <span class="sub" id="sync"></span></h2>
   <div class="toolbar">
     <input type="search" id="q" placeholder="상호·메뉴·건물 검색">
     <select id="sortBy">
@@ -287,6 +287,7 @@ td .btn{padding:5px 10px;font-size:12px}
       <option value="name">이름순</option>
       <option value="cat">분류순</option>
     </select>
+    <button class="btn ghost" id="refreshBtn">시트 새로고침</button>
     <button class="btn ghost" id="exportBtn">평가 내보내기</button>
     <button class="btn ghost" id="importBtn">평가 가져오기</button>
     <input type="file" id="importFile" accept="application/json" class="sr">
@@ -329,6 +330,7 @@ td .btn{padding:5px 10px;font-size:12px}
 </div>
 <div class="toast" id="toast"></div>
 
+<script src="config.js"></script>
 <script src="data.js"></script>
 <script src="reviews.js"></script>
 <script>
@@ -350,11 +352,48 @@ td .btn{padding:5px 10px;font-size:12px}
   let filt = load(LS.filt,null) || { cats:[...CATS], zones:ZONES.filter(z=>z.inScope!==false).map(z=>z.id) };
   let localReviews = load(LS.reviews,[]);
 
+  // ---------- 구글 시트 동기화 (config.js 의 sheetApi 가 있을 때) ----------
+  const API = ((window.CONFIG&&window.CONFIG.sheetApi)||'').trim();
+  const LS2 = { cache:'kmac.shared.cache.v1', pending:'kmac.pending.v1' };
+  let sharedReviews = API ? (load(LS2.cache,null) || []) : (window.REVIEWS||[]);
+  let pending = API ? load(LS2.pending,[]) : [];
+  let syncState = API ? 'loading' : 'local', syncMsg = '';
+  async function apiGet(){ const r=await fetch(API+'?action=list&t='+Date.now(),{cache:'no-store'}); if(!r.ok) throw new Error('HTTP '+r.status); const j=await r.json(); if(!j.ok) throw new Error(j.error||'응답 오류'); return j.reviews||[]; }
+  async function apiPost(body){ const r=await fetch(API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(body)}); if(!r.ok) throw new Error('HTTP '+r.status); const j=await r.json(); if(!j.ok) throw new Error(j.error||'저장 실패'); return j; }
+  async function fetchShared(){
+    if(!API) return;
+    syncState='loading'; renderSync();
+    try{ sharedReviews=await apiGet(); save(LS2.cache,sharedReviews); syncState='ok'; syncMsg=''; }
+    catch(e){ syncState='error'; syncMsg=String(e.message||e); }
+    renderSync(); render();
+    if(pending.length) retryPending();
+  }
+  async function retryPending(){
+    if(!API||!pending.length) return;
+    const rest=[];
+    for(const r of pending){ try{ await apiPost({action:'add',review:r}); if(!sharedReviews.find(x=>x.rid===r.rid)) sharedReviews.push(r); }catch(e){ rest.push(r); } }
+    pending=rest; save(LS2.pending,pending); save(LS2.cache,sharedReviews); renderSync(); render();
+  }
+  function renderSync(){
+    const el=$('sync'); if(!el) return;
+    if(!API){ el.innerHTML='로컬 모드 · 평가는 이 브라우저에만 저장 (config.js 에 시트 주소를 넣으면 공유)'; return; }
+    const n=sharedReviews.length, pend=pending.length?` · <span style="color:#b3261e">미전송 ${pending.length}건</span>`:'';
+    el.innerHTML = syncState==='loading' ? '구글 시트 불러오는 중…' :
+      syncState==='ok' ? `구글 시트 연결됨 · 공유 평가 ${n}건${pend}` :
+      `<span style="color:#b3261e">시트 연결 실패 (${esc(syncMsg)})</span> · 캐시 ${n}건${pend}`;
+  }
+
   // ---------- KMAC 평가 ----------
+  const myName = () => load(LS.who,'');
   const allReviews = () => {
-    const base = (window.REVIEWS||[]).map(r=>({...r, shared:true}));
-    const byId = new Map(base.map(r=>[r.rid,r]));
-    for (const r of localReviews) byId.set(r.rid, r);
+    const byId = new Map();
+    if (API) {
+      for (const r of sharedReviews) byId.set(r.rid, {...r, shared:true, mine: r.who===myName()});
+      for (const r of pending) byId.set(r.rid, {...r, pending:true, mine:true});
+    } else {
+      for (const r of (window.REVIEWS||[])) byId.set(r.rid, {...r, shared:true});
+      for (const r of localReviews) byId.set(r.rid, {...r, mine:true});
+    }
     return [...byId.values()];
   };
   const summary = id => {
@@ -529,18 +568,33 @@ td .btn{padding:5px 10px;font-size:12px}
     if(draft.revisit===null) return toast('재방문 의사를 골라 주세요.');
     save(LS.who,who);
     const r={ rid:Date.now().toString(36)+Math.random().toString(36).slice(2,6), id:rateTarget.id, who, taste:draft.taste, clean:draft.clean, kind:draft.kind, revisit:draft.revisit, note:$('note').value.trim(), date:new Date().toISOString().slice(0,10) };
-    localReviews.push(r); save(LS.reviews,localReviews);
-    toast('저장했어요. "평가 내보내기"로 팀과 공유할 수 있어요.');
-    renderReviewList(rateTarget); render();
+    if (API) {
+      pending.push(r); save(LS2.pending,pending); renderReviewList(rateTarget); render(); renderSync();
+      const target=rateTarget;
+      apiPost({action:'add',review:r}).then(()=>{ pending=pending.filter(x=>x.rid!==r.rid); save(LS2.pending,pending); sharedReviews.push(r); save(LS2.cache,sharedReviews); toast('구글 시트에 저장했어요.'); if(rateTarget===target) renderReviewList(target); render(); renderSync(); })
+        .catch(e=>{ toast('시트 전송 실패, 임시 보관했어요. 나중에 자동 재시도합니다.'); renderSync(); });
+    } else {
+      localReviews.push(r); save(LS.reviews,localReviews);
+      toast('저장했어요. "평가 내보내기"로 팀과 공유할 수 있어요.');
+      renderReviewList(rateTarget); render();
+    }
   };
   function renderReviewList(d){
     const rs=allReviews().filter(r=>r.id===d.id).sort((a,b)=>(b.date||'').localeCompare(a.date||''));
     const sm=summary(d.id);
     $('reviewList').innerHTML = `<div class="sm" style="font-weight:900;color:var(--muted);font-size:12px">이 식당의 평가 ${rs.length}건 ${sm?'· 평균 '+sm.overall.toFixed(2):''}</div>` +
-      rs.map(r=>`<div class="review"><div><span class="who">${esc(r.who)}</span> <span class="sm">${esc(r.date||'')}${r.shared?' · 공유':''}</span><br>
+      rs.map(r=>`<div class="review"><div><span class="who">${esc(r.who)}</span> <span class="sm">${esc(r.date||'')}${r.pending?' · <span style="color:#b3261e">미전송</span>':''}</span><br>
         맛 ${Number(r.taste).toFixed(1)} · 청결 ${Number(r.clean).toFixed(1)} · 친절 ${Number(r.kind).toFixed(1)} · 재방문 ${r.revisit?'Y':'N'}${r.note?'<br><span class="sm">'+esc(r.note)+'</span>':''}</div>
-        ${r.shared?'':`<button data-del="${esc(r.rid)}">삭제</button>`}</div>`).join('');
-    $('reviewList').querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>{ localReviews=localReviews.filter(x=>x.rid!==b.dataset.del); save(LS.reviews,localReviews); renderReviewList(d); render(); });
+        ${r.mine?`<button data-del="${esc(r.rid)}">삭제</button>`:''}</div>`).join('');
+    $('reviewList').querySelectorAll('[data-del]').forEach(b=>b.onclick=async()=>{
+      const rid=b.dataset.del;
+      if(!confirm('이 평가를 삭제할까요?')) return;
+      if (API) {
+        if (pending.find(x=>x.rid===rid)) { pending=pending.filter(x=>x.rid!==rid); save(LS2.pending,pending); }
+        else { try{ await apiPost({action:'delete',rid,who:myName()}); sharedReviews=sharedReviews.filter(x=>x.rid!==rid); save(LS2.cache,sharedReviews); toast('삭제했어요.'); }catch(e){ return toast('삭제 실패: '+e.message); } }
+      } else { localReviews=localReviews.filter(x=>x.rid!==rid); save(LS.reviews,localReviews); }
+      renderReviewList(d); render(); renderSync();
+    });
   }
 
   // ---------- 표 ----------
@@ -601,17 +655,19 @@ td .btn{padding:5px 10px;font-size:12px}
   $('importFile').onchange=async e=>{
     const f=e.target.files[0]; if(!f) return;
     try{ const arr=JSON.parse(await f.text()); if(!Array.isArray(arr)) throw 0;
-      const ids=new Set(localReviews.map(r=>r.rid)); let n=0;
-      for(const r of arr){ if(r&&r.rid&&r.id&&!ids.has(r.rid)){ localReviews.push(r); ids.add(r.rid); n++; } }
-      save(LS.reviews,localReviews); render(); toast(`평가 ${n}건을 가져왔어요.`);
+      const have=new Set(allReviews().map(r=>r.rid)); let n=0;
+      for(const r of arr){ if(r&&r.rid&&r.id&&!have.has(r.rid)){ (API?pending:localReviews).push(r); have.add(r.rid); n++; } }
+      if(API){ save(LS2.pending,pending); toast(`평가 ${n}건을 시트로 보내는 중…`); retryPending(); } else { save(LS.reviews,localReviews); toast(`평가 ${n}건을 가져왔어요.`); }
+      render();
     }catch{ toast('JSON 형식이 아니에요.'); }
     e.target.value='';
   };
   $('resetBtn').onclick=()=>{
-    if(!confirm('이 브라우저에 저장된 내 평가·제외·당첨 기록·필터를 모두 지울까요? (reviews.js 의 공유 평가는 남습니다)')) return;
+    if(!confirm('이 브라우저에 저장된 제외·당첨 기록·필터·닉네임을 지울까요? (구글 시트의 평가는 남습니다)')) return;
     Object.values(LS).forEach(k=>{try{localStorage.removeItem(k)}catch(e){}}); location.reload();
   };
-  render();
+  $('refreshBtn').onclick=()=>{ if(!API) return toast('로컬 모드예요. config.js 에 시트 주소를 넣으면 공유됩니다.'); fetchShared(); };
+  render(); renderSync(); fetchShared();
 })();
 </script>
 </body>
