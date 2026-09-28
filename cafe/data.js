@@ -20,16 +20,12 @@ window.META = {
       "label": "국회대로 본선 (LG에클라트·금산빌딩·파라곤)"
     },
     {
-      "id": "station",
-      "label": "국회의사당역 출구 앞 (익스콘·더샵아일랜드파크)"
-    },
-    {
       "id": "west",
       "label": "국회 경내·KBS",
       "inScope": false
     }
   ],
-  "footer": "범위: 여의도공원 서측(여의공원로 기준) ~ 국회의사당역 출구 앞. 국회 경내·KBS는 기본 제외. 카카오맵 조회(2026-09-28) 기준이며 비고에 '확인 필요'가 있는 곳은 폐점·이전 가능성이 있습니다. 목록 수정은 cafe/data.js."
+  "footer": "범위: 여의도공원 서측(여의공원로 기준) ~ 국회대로 골목까지(국회의사당역 출구 앞 상가는 제외). 국회 경내·KBS는 기본 제외. 카카오맵 조회(2026-09-28) 기준이며 비고에 '확인 필요'가 있는 곳은 폐점·이전 가능성이 있습니다. 목록 수정은 cafe/data.js."
 };
 
 window.RESTAURANTS = [
@@ -121,29 +117,6 @@ window.RESTAURANTS = [
   {"id": "cafe-sbux-gukhoe", "name": "스타벅스 국회대로점", "cat": "커피", "menu": "아메리카노·프라푸치노", "price": "", "addr": "국회대로 786", "bldg": "", "zone": "main", "src": "1번 출구 도보 4분 · 06:30~20:00", "q": "", "franchise": true},
   {"id": "cafe-k80999414", "name": "볼스 여의도점", "cat": "커피", "menu": "", "price": "", "addr": "국회대로 800", "bldg": "여의도파라곤", "zone": "main", "src": "", "q": ""},
   {"id": "cafe-pascucci", "name": "파스쿠찌 서여의도점", "cat": "커피", "menu": "커피·젤라또·티라미수", "price": "", "addr": "국회대로 800 1층", "bldg": "여의도파라곤", "zone": "main", "src": "평일 08:00~22:00 · 6천 원 이상 2시간 주차", "q": "", "franchise": true},
-  // ── 국회의사당역 출구 앞 (익스콘·더샵아일랜드파크)
-  {"id": "cafe-k761241088", "name": "에잇비돌체 국회의사당역점", "cat": "디저트", "menu": "", "price": "", "addr": "국회대로 지하 758", "bldg": "국회의사당역 역사 안", "zone": "station", "src": "", "q": ""},
-  {"id": "cafe-k927958394", "name": "스몰배치 여의도점", "cat": "커피", "menu": "", "price": "", "addr": "의사당대로 18", "bldg": "", "zone": "station", "src": "", "q": ""},
-  {"id": "cafe-k1799405993", "name": "애큐온라운지", "cat": "커피", "menu": "", "price": "", "addr": "의사당대로 18", "bldg": "", "zone": "station", "src": "", "q": ""},
-  {"id": "cafe-twosome-station", "name": "투썸플레이스 국회의사당역점", "cat": "커피", "menu": "케이크·커피", "price": "", "addr": "의사당대로 21 1층", "bldg": "한국평가데이터", "zone": "station", "src": "", "q": "", "franchise": true},
-  {"id": "cafe-ediya", "name": "이디야커피 국회의사당역점", "cat": "커피", "menu": "아메리카노·토피넛라떼", "price": "3.2천~4.5천", "addr": "의사당대로 22 1층", "bldg": "이룸센터 (4번 출구 앞)", "zone": "station", "src": "07:30~20:30", "q": "", "franchise": true},
-  {"id": "cafe-pb-kbs", "name": "파리바게뜨 KBS여의도점", "cat": "베이커리", "menu": "케이크·빵", "price": "", "addr": "의사당대로 26", "bldg": "더하우스소호", "zone": "station", "src": "07:00~23:00", "q": "", "franchise": true},
-  {"id": "cafe-sbux-kbs", "name": "스타벅스 여의도KBS R점", "cat": "커피", "menu": "아메리카노·라떼", "price": "", "addr": "의사당대로 26 1층 109~113호", "bldg": "더하우스소호", "zone": "station", "src": "월~금 06:30~21:00", "q": "", "franchise": true},
-  {"id": "cafe-k134825263", "name": "폴바셋 여의도현대카드점", "cat": "커피", "menu": "", "price": "", "addr": "의사당대로 3", "bldg": "현대카드 빌딩", "zone": "station", "src": "", "q": "", "franchise": true},
-  {"id": "cafe-k669599601", "name": "고망고 여의도KBS본점", "cat": "디저트", "menu": "", "price": "", "addr": "의사당대로 38", "bldg": "더샵아일랜드파크", "zone": "station", "src": "", "q": "", "franchise": true},
-  {"id": "cafe-k1299173034", "name": "매머드익스프레스 여의도KBS본관점", "cat": "커피", "menu": "", "price": "", "addr": "의사당대로 38", "bldg": "더샵아일랜드파크", "zone": "station", "src": "", "q": "", "franchise": true},
-  {"id": "cafe-k244044641", "name": "버터커피하우스", "cat": "커피", "menu": "", "price": "", "addr": "의사당대로 38", "bldg": "더샵아일랜드파크", "zone": "station", "src": "", "q": ""},
-  {"id": "cafe-k737639589", "name": "커스텀커피 여의도점", "cat": "커피", "menu": "", "price": "", "addr": "의사당대로 38", "bldg": "더샵아일랜드파크", "zone": "station", "src": "", "q": "", "franchise": true},
-  {"id": "cafe-coffeegirl", "name": "커피소녀", "cat": "커피", "menu": "커피", "price": "", "addr": "의사당대로 38", "bldg": "더샵아일랜드파크", "zone": "station", "src": "카카오맵 기준 더샵아일랜드파크", "q": ""},
-  {"id": "cafe-k1874431010", "name": "클로커피", "cat": "커피", "menu": "", "price": "", "addr": "의사당대로 38", "bldg": "더샵아일랜드파크", "zone": "station", "src": "", "q": ""},
-  {"id": "cafe-michele", "name": "미켈레커피 여의도점", "cat": "커피", "menu": "에스프레소·라떼", "price": "", "addr": "의사당대로 38 101동 107~108호", "bldg": "더샵아일랜드파크", "zone": "station", "src": "다이닝코드 ★3.8 · 08:00~21:30", "q": "", "franchise": true},
-  {"id": "cafe-compose", "name": "컴포즈커피 여의도KBS점", "cat": "커피", "menu": "저가 커피", "price": "", "addr": "의사당대로 38 102동 108호", "bldg": "더샵아일랜드파크", "zone": "station", "src": "카카오 조회에 없음 · 영업 확인 필요", "q": "", "franchise": true},
-  {"id": "cafe-sunsun10", "name": "선선10 W여의도점", "cat": "커피", "menu": "커피 (음료 주문 시 러스크 증정)", "price": "", "addr": "의사당대로 38 102동 111호", "bldg": "더샵아일랜드파크", "zone": "station", "src": "07:00~20:00 · 토 10:00~17:00", "q": "", "franchise": true},
-  {"id": "cafe-paik", "name": "빽다방 KBS본관점", "cat": "커피", "menu": "원조커피·사라다빵", "price": "", "addr": "의사당대로 38 102동 121호", "bldg": "더샵아일랜드파크", "zone": "station", "src": "매일 07:30~23:00", "q": "", "franchise": true},
-  {"id": "cafe-mega", "name": "메가MGC커피 여의도KBS점", "cat": "커피", "menu": "저가 커피·에이드", "price": "", "addr": "의사당대로 38 102동 1층 116호", "bldg": "더샵아일랜드파크", "zone": "station", "src": "", "q": "", "franchise": true},
-  {"id": "cafe-gotonly", "name": "곳온니플레이스 여의도점 (PARK SIDE)", "cat": "커피", "menu": "아인슈페너·디저트", "price": "", "addr": "의사당대로 38 103동 107호", "bldg": "더샵아일랜드파크", "zone": "station", "src": "평일 08:00~22:30", "q": ""},
-  {"id": "cafe-k1964855917", "name": "스타벅스 국회의사당역점", "cat": "커피", "menu": "", "price": "", "addr": "의사당대로 8", "bldg": "", "zone": "station", "src": "", "q": "", "franchise": true},
-  {"id": "cafe-k1848391861", "name": "어펜딕스 여의도본점", "cat": "커피", "menu": "", "price": "", "addr": "의사당대로 8", "bldg": "", "zone": "station", "src": "", "q": ""},
   // ── 국회 경내·KBS
   {"id": "cafe-k24962165", "name": "르뽀미에 여의도KBS점", "cat": "베이커리", "menu": "", "price": "", "addr": "여의공원로 13", "bldg": "KBS", "zone": "west", "src": "", "q": "", "franchise": true},
   {"id": "cafe-bohemian", "name": "보헤미안박이추커피 KBS점", "cat": "커피", "menu": "핸드드립 커피", "price": "", "addr": "여의공원로 13 신관 2층 로비", "bldg": "KBS 신관", "zone": "west", "src": "매일 08:00~20:00", "q": "", "franchise": true},
