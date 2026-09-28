@@ -7,6 +7,7 @@
  *
  * 시트: 첫 시트에 아래 헤더가 자동으로 만들어진다.
  *   rid | id | who | taste | clean | kind | revisit | note | date | created_at | deleted | price
+ *   (price = 가격 만족도 별점 0.5~5, 금액 아님)
  */
 var SHEET_NAME = 'reviews';
 var HEADER = ['rid', 'id', 'who', 'taste', 'clean', 'kind', 'revisit', 'note', 'date', 'created_at', 'deleted', 'price'];

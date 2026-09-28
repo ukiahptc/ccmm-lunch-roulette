@@ -260,15 +260,6 @@ td .btn{padding:5px 10px;font-size:12px}
             <option value="4.5">4.5 이상</option>
           </select>
         </label>
-        <label>1인 가격
-          <select id="maxPrice">
-            <option value="0">상관없음</option>
-            <option value="10000">1만 원 이하</option>
-            <option value="13000">1.3만 원 이하</option>
-            <option value="15000">1.5만 원 이하</option>
-            <option value="20000">2만 원 이하</option>
-          </select>
-        </label>
         <label><input type="checkbox" id="includeUnrated" checked> 아직 평가 없는 곳도 포함</label>
         <label><input type="checkbox" id="revisitOnly"> 재방문 의사 절반 이상만</label>
       </div>
@@ -295,7 +286,6 @@ td .btn{padding:5px 10px;font-size:12px}
       <option value="kmac">KMAC 별점순</option>
       <option value="name">이름순</option>
       <option value="cat">분류순</option>
-      <option value="price">1인 가격순</option>
     </select>
     <button class="btn ghost" id="refreshBtn">시트 새로고침</button>
     <button class="btn ghost" id="exportBtn">평가 내보내기</button>
@@ -330,7 +320,7 @@ td .btn{padding:5px 10px;font-size:12px}
     <div class="rate-row"><span class="k">맛</span><div class="stars" data-key="taste"></div><span class="v" data-v="taste">0</span></div>
     <div class="rate-row"><span class="k">청결</span><div class="stars" data-key="clean"></div><span class="v" data-v="clean">0</span></div>
     <div class="rate-row"><span class="k">친절도</span><div class="stars" data-key="kind"></div><span class="v" data-v="kind">0</span></div>
-    <div class="field"><label>1인 가격 (원) · 실제로 낸 금액 기준</label><input type="number" id="rprice" min="0" step="100" inputmode="numeric" placeholder="예: 12000"></div>
+    <div class="rate-row"><span class="k">가격</span><div class="stars" data-key="price"></div><span class="v" data-v="price">0</span></div>
     <div class="field"><label>재방문 의사</label>
       <div class="seg" id="revisitSeg"><button data-rv="y">Y 또 올래요</button><button data-rv="n">N 한 번이면 충분</button></div>
     </div>
@@ -414,11 +404,13 @@ td .btn{padding:5px 10px;font-size:12px}
     const taste=avg('taste'), clean=avg('clean'), kind=avg('kind');
     const priced = rs.filter(r=>Number(r.price)>0);
     const price = priced.length ? priced.reduce((a,r)=>a+Number(r.price),0)/priced.length : null;
-    return { n:rs.length, taste, clean, kind, overall:(taste+clean+kind)/3, revisit: rs.filter(r=>r.revisit).length/rs.length, price };
+    // 종합 = 각 평가의 항목 평균(가격 항목이 있는 평가는 4개, 없는 옛 평가는 3개)을 다시 평균
+    const per = rs.map(r=>{ const ks=['taste','clean','kind'].concat(Number(r.price)>0?['price']:[]); return ks.reduce((a,k)=>a+Number(r[k]||0),0)/ks.length; });
+    const overall = per.reduce((a,b)=>a+b,0)/per.length;
+    return { n:rs.length, taste, clean, kind, price, overall, revisit: rs.filter(r=>r.revisit).length/rs.length };
   };
-  const fmtWon = v => v==null ? '' : v>=10000 ? (Math.round(v/100)/100).toFixed(2).replace(/\.?0+$/,'')+'만' : Math.round(v).toLocaleString()+'원';
   const starText = v => { const full=Math.floor(v), half=v-full>=0.5; return '★'.repeat(full)+(half?'⯪':'')+'☆'.repeat(5-full-(half?1:0)); };
-  const kmacBadge = (sm, long=false) => sm ? `<span class="kmac"><span class="st">${starText(Math.round(sm.overall*2)/2)}</span> ${sm.overall.toFixed(1)}${long?` · 맛 ${sm.taste.toFixed(1)} 청결 ${sm.clean.toFixed(1)} 친절 ${sm.kind.toFixed(1)}`:''} · 재방문 ${Math.round(sm.revisit*100)}%${sm.price?' · 1인 '+fmtWon(sm.price):''} · ${sm.n}명</span>` : '<span class="kmac">아직 평가 없음</span>';
+  const kmacBadge = (sm, long=false) => sm ? `<span class="kmac"><span class="st">${starText(Math.round(sm.overall*2)/2)}</span> ${sm.overall.toFixed(1)}${long?` · 맛 ${sm.taste.toFixed(1)} 청결 ${sm.clean.toFixed(1)} 친절 ${sm.kind.toFixed(1)}${sm.price?' 가격 '+sm.price.toFixed(1):''}`:''} · 재방문 ${Math.round(sm.revisit*100)}% · ${sm.n}명</span>` : '<span class="kmac">아직 평가 없음</span>';
 
   // ---------- 필터 UI ----------
   const catChips=$('catChips');
@@ -446,10 +438,10 @@ td .btn{padding:5px 10px;font-size:12px}
     const m=b.dataset.zone; filt.zones = m==='all' ? ZONES.map(z=>z.id) : m==='scope' ? ZONES.filter(z=>z.inScope!==false).map(z=>z.id) : [];
     save(LS.filt,filt); render();
   });
-  ['minKmac','maxPrice','includeUnrated','revisitOnly','skipRecent','skipExcluded','q','sortBy'].forEach(id=>$(id).addEventListener('input',render));
+  ['minKmac','includeUnrated','revisitOnly','skipRecent','skipExcluded','q','sortBy'].forEach(id=>$(id).addEventListener('input',render));
 
   function pool(){
-    const min=parseFloat($('minKmac').value)||0, maxP=parseFloat($('maxPrice').value)||0, incUn=$('includeUnrated').checked, rvOnly=$('revisitOnly').checked;
+    const min=parseFloat($('minKmac').value)||0, incUn=$('includeUnrated').checked, rvOnly=$('revisitOnly').checked;
     const skip=$('skipRecent').checked, skipEx=$('skipExcluded').checked, recent=new Set(hist.slice(0,5));
     return data.filter(d=>{
       if(d.closed) return false;
@@ -457,8 +449,8 @@ td .btn{padding:5px 10px;font-size:12px}
       if(!filt.cats.includes(d.cat)) return false;
       if(!filt.zones.includes(d.zone)) return false;
       const sm=summary(d.id);
-      if(!sm){ if(!incUn) return false; if(rvOnly) return false; if(maxP) return false; }
-      else { if(sm.overall<min) return false; if(rvOnly && sm.revisit<0.5) return false; if(maxP && (!sm.price || sm.price>maxP)) return false; }
+      if(!sm){ if(!incUn) return false; if(rvOnly) return false; }
+      else { if(sm.overall<min) return false; if(rvOnly && sm.revisit<0.5) return false; }
       if(skip && recent.has(d.id)) return false;
       return true;
     });
@@ -469,7 +461,6 @@ td .btn{padding:5px 10px;font-size:12px}
     const inScope=ZONES.filter(z=>z.inScope!==false).map(z=>z.id);
     parts.push(filt.zones.length===ZONES.length?'구역 전체':(filt.zones.length===inScope.length&&inScope.every(z=>filt.zones.includes(z)))?'범위 안 구역':filt.zones.length?`구역 ${filt.zones.length}개`:'구역 없음');
     const min=parseFloat($('minKmac').value)||0; if(min) parts.push(`KMAC ${min}↑`);
-    const maxP=parseFloat($('maxPrice').value)||0; if(maxP) parts.push(`1인 ${fmtWon(maxP)} 이하`);
     if(!$('includeUnrated').checked) parts.push('평가 있는 곳만');
     if($('revisitOnly').checked) parts.push('재방문 50%↑');
     if($('skipRecent').checked) parts.push('최근 5회 제외');
@@ -548,7 +539,7 @@ td .btn{padding:5px 10px;font-size:12px}
 
   // ---------- 별점 입력 위젯 (0.5 단위) ----------
   const STAR = '<svg viewBox="0 0 24 24"><defs><linearGradient id="G" x1="0" x2="1"><stop offset="50%" stop-color="#f5a623"/><stop offset="50%" stop-color="#ffe6ef"/></linearGradient></defs><path d="M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4 6.1 20.5l1.2-6.5L2.5 9.4l6.6-.9z" stroke="#e8a6c0" stroke-width="1.2"/></svg>';
-  let draft={taste:0,clean:0,kind:0,revisit:null}; let rateTarget=null;
+  let draft={taste:0,clean:0,kind:0,price:0,revisit:null}; let rateTarget=null;
   function buildStars(){
     document.querySelectorAll('#rateModal .stars').forEach(row=>{
       row.innerHTML='';
@@ -570,19 +561,17 @@ td .btn{padding:5px 10px;font-size:12px}
   document.querySelectorAll('#revisitSeg button').forEach(b=>b.onclick=()=>{ draft.revisit=(b.dataset.rv==='y'); paintStars(); });
   buildStars();
   function openRate(d){
-    rateTarget=d; draft={taste:0,clean:0,kind:0,revisit:null};
+    rateTarget=d; draft={taste:0,clean:0,kind:0,price:0,revisit:null};
     $('rateTitle').textContent=`KMAC 별점 · ${d.name}`;
-    $('who').value=load(LS.who,''); $('note').value=''; $('rprice').value='';
+    $('who').value=load(LS.who,''); $('note').value='';
     paintStars(); renderReviewList(d); closeModals(); openModal('rateModal');
   }
   $('saveRate').onclick=()=>{
     if(!rateTarget) return;
     const who=$('who').value.trim();
     if(!who) return toast('닉네임을 넣어 주세요.');
-    if(!draft.taste||!draft.clean||!draft.kind) return toast('맛·청결·친절도 별점을 모두 매겨 주세요.');
-    const price=Math.round(Number($('rprice').value));
-    if(!(price>0)) return toast('1인 가격을 넣어 주세요.');
-    if(price<1000||price>200000) return toast('가격은 원 단위로 넣어 주세요 (예: 12000).');
+    if(!draft.taste||!draft.clean||!draft.kind||!draft.price) return toast('맛·청결·친절도·가격 별점을 모두 매겨 주세요.');
+    const price=draft.price;
     if(draft.revisit===null) return toast('재방문 의사를 골라 주세요.');
     save(LS.who,who);
     const r={ rid:Date.now().toString(36)+Math.random().toString(36).slice(2,6), id:rateTarget.id, who, taste:draft.taste, clean:draft.clean, kind:draft.kind, revisit:draft.revisit, price, note:$('note').value.trim(), date:new Date().toISOString().slice(0,10) };
@@ -602,7 +591,7 @@ td .btn{padding:5px 10px;font-size:12px}
     const sm=summary(d.id);
     $('reviewList').innerHTML = `<div class="sm" style="font-weight:900;color:var(--muted);font-size:12px">이 식당의 평가 ${rs.length}건 ${sm?'· 평균 '+sm.overall.toFixed(2):''}</div>` +
       rs.map(r=>`<div class="review"><div><span class="who">${esc(r.who)}</span> <span class="sm">${esc(r.date||'')}${r.pending?' · <span style="color:#b3261e">미전송</span>':''}</span><br>
-        맛 ${Number(r.taste).toFixed(1)} · 청결 ${Number(r.clean).toFixed(1)} · 친절 ${Number(r.kind).toFixed(1)} · 재방문 ${r.revisit?'Y':'N'}${Number(r.price)>0?' · '+Number(r.price).toLocaleString()+'원':''}${r.note?'<br><span class="sm">'+esc(r.note)+'</span>':''}</div>
+        맛 ${Number(r.taste).toFixed(1)} · 청결 ${Number(r.clean).toFixed(1)} · 친절 ${Number(r.kind).toFixed(1)} ${Number(r.price)>0?' · 가격 '+Number(r.price).toFixed(1):''} · 재방문 ${r.revisit?'Y':'N'}${r.note?'<br><span class="sm">'+esc(r.note)+'</span>':''}</div>
         ${r.mine?`<button data-del="${esc(r.rid)}">삭제</button>`:''}</div>`).join('');
     $('reviewList').querySelectorAll('[data-del]').forEach(b=>b.onclick=async()=>{
       const rid=b.dataset.del;
@@ -623,7 +612,6 @@ td .btn{padding:5px 10px;font-size:12px}
     const zi=id=>ZONES.findIndex(z=>z.id===id);
     const rows=data.slice().sort((a,b)=>{
       if(sort==='kmac'){ const sa=summary(a.id), sb=summary(b.id); return ((sb?sb.overall:-1)-(sa?sa.overall:-1)) || a.name.localeCompare(b.name,'ko'); }
-      if(sort==='price'){ const pa=(summary(a.id)||{}).price||Infinity, pb=(summary(b.id)||{}).price||Infinity; return (pa-pb) || a.name.localeCompare(b.name,'ko'); }
       if(sort==='name') return a.name.localeCompare(b.name,'ko');
       if(sort==='cat') return a.cat.localeCompare(b.cat,'ko') || a.name.localeCompare(b.name,'ko');
       return zi(a.zone)-zi(b.zone) || a.name.localeCompare(b.name,'ko');
