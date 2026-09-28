@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>CCMM 점심 룰렛</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐰</text></svg>">
-<meta name="description" content="여의도 CCMM빌딩 주변(여의도공원 서측 ~ 국회의사당역) 점심 맛집 룰렛">
+<meta name="description" content="여의도 CCMM빌딩 주변(여의도공원 서측 ~ 국회의사당역) 점심 맛집 룰렛 + KMAC 별점">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
 <style>
@@ -96,6 +96,65 @@ footer{margin-top:28px;font-size:12px;color:var(--muted);line-height:1.7;text-al
 .sr{position:absolute;left:-9999px}
 @media(max-width:520px){.result .name{font-size:27px} th:nth-child(5),td:nth-child(5){display:none} .card{padding:16px;border-radius:22px} .brand .mascot{width:56px;height:56px} .peek{width:52px;height:52px} .peek.tr{top:-26px;right:12px}}
 </style>
+
+<style>
+/* ── 추가: 레이아웃 분리 · 팝업 · KMAC 별점 */
+.grid{grid-template-columns:minmax(0,1fr)}
+@media(min-width:900px){.grid{grid-template-columns:400px minmax(0,1fr)}}
+.full{margin-top:22px}
+.fgroup{margin-top:14px;padding-top:12px;border-top:1px dashed var(--line)}
+.fgroup:first-of-type{margin-top:0;padding-top:0;border-top:0}
+.fgroup .lbl{font-size:12px;font-weight:900;color:var(--muted);margin-bottom:8px;display:flex;justify-content:space-between;align-items:center}
+.fgroup .lbl button{font:inherit;font-size:11px;font-weight:900;color:var(--accent-dk);background:#fff;border:1px solid var(--line);border-radius:999px;padding:2px 9px;cursor:pointer;margin-left:6px}
+.zones{display:grid;grid-template-columns:1fr;gap:6px 14px;font-size:13px;font-weight:700}
+@media(min-width:560px){.zones{grid-template-columns:1fr 1fr}}
+.zones label{display:flex;align-items:center;gap:6px;cursor:pointer}
+.zones input{accent-color:var(--accent);width:16px;height:16px}
+select{font:inherit;font-weight:700;padding:5px 8px;border:2px solid var(--line);border-radius:10px;background:#fff;color:var(--ink)}
+.summary{margin-top:14px;background:#fff3f7;border-radius:14px;padding:10px 14px;font-size:13px;font-weight:700;color:var(--accent-dk);display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.summary .cnt{font-family:"Jua",sans-serif;font-size:20px}
+/* 팝업 */
+.modal{position:fixed;inset:0;background:rgba(90,54,72,.35);display:none;align-items:center;justify-content:center;padding:16px;z-index:50;backdrop-filter:blur(2px)}
+.modal.open{display:flex}
+.dialog{background:#fff;border:2px solid var(--line);border-radius:26px;box-shadow:0 20px 60px rgba(217,83,138,.25);width:min(560px,100%);max-height:92vh;overflow:auto;padding:22px 20px 18px;position:relative;animation:pop .35s cubic-bezier(.2,1.4,.4,1)}
+.dialog .x{position:absolute;top:10px;right:12px;border:0;background:var(--chip);color:var(--accent-dk);width:34px;height:34px;border-radius:50%;font-size:18px;font-weight:900;cursor:pointer}
+.dialog h3{font-family:"Jua",sans-serif;font-weight:400;font-size:20px;color:var(--accent-dk);margin:0 0 10px}
+.result-body{text-align:center}
+.result-body .name{font-family:"Jua","Noto Sans KR",sans-serif;font-size:34px;color:var(--accent-dk);line-height:1.15}
+.result-body .meta{color:var(--muted);font-size:14px;margin-top:6px;font-weight:700}
+.result-body .addr{font-size:13px;margin-top:6px}
+.kmac{display:inline-flex;align-items:center;gap:6px;background:#fff3f7;border:1px solid var(--line);border-radius:999px;padding:4px 10px;font-size:12px;font-weight:900;color:var(--accent-dk);margin-top:10px}
+.kmac .st{color:#f5a623;letter-spacing:-1px}
+.actions{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:14px}
+.btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+/* 별점 입력 */
+.rate-row{display:grid;grid-template-columns:64px 1fr 48px;align-items:center;gap:10px;margin-top:10px}
+.rate-row .k{font-weight:900;font-size:14px}
+.rate-row .v{font-weight:900;color:var(--accent-dk);text-align:right;font-size:14px}
+.stars{display:flex;gap:4px}
+.star{position:relative;width:34px;height:34px;flex:none}
+.star svg{width:100%;height:100%;display:block}
+.star .half{position:absolute;top:0;bottom:0;width:50%;cursor:pointer;background:transparent;border:0;padding:0}
+.star .half.l{left:0}.star .half.r{right:0}
+.stars.small .star{width:16px;height:16px}
+.field{margin-top:12px}
+.field label{display:block;font-size:12px;font-weight:900;color:var(--muted);margin-bottom:6px}
+.field input[type=text],.field textarea{width:100%;padding:9px 12px;border:2px solid var(--line);border-radius:12px;font:inherit;color:var(--ink);background:#fff}
+.field textarea{min-height:70px;resize:vertical}
+.seg{display:inline-flex;border:2px solid var(--line);border-radius:999px;overflow:hidden}
+.seg button{font:inherit;font-weight:900;padding:7px 16px;border:0;background:#fff;color:var(--muted);cursor:pointer}
+.seg button.on{background:var(--accent);color:#fff}
+.reviews{margin-top:14px;border-top:1px dashed var(--line);padding-top:10px}
+.review{font-size:13px;padding:8px 10px;border-radius:12px;background:#fffafc;border:1px solid #ffe6ef;margin-top:6px;display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
+.review .who{font-weight:900;color:var(--accent-dk)}
+.review .sm{color:var(--muted);font-size:12px}
+.review button{font:inherit;font-size:11px;border:1px solid #f3c5c5;color:#b3261e;background:#fff;border-radius:999px;padding:2px 8px;cursor:pointer;flex:none}
+td .kmac{margin-top:2px}
+td .btn{padding:5px 10px;font-size:12px}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--accent-dk);color:#fff;padding:10px 16px;border-radius:999px;font-weight:900;font-size:13px;display:none;z-index:60}
+.toast.show{display:block}
+</style>
+
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -148,7 +207,7 @@ footer{margin-top:28px;font-size:12px;color:var(--muted);line-height:1.7;text-al
 <header>
   <div class="brand">
     <svg class="mascot" aria-hidden="true"><use href="#bunny"/></svg>
-    <h1>CCMM 점심 룰렛 <small>여의도공원 서측 · 국회의사당역까지 · 네이버 별점 4.5 기준</small></h1>
+    <h1>CCMM 점심 룰렛 <small>여의도공원 서측 · 국회의사당역까지 · KMAC 별점</small></h1>
   </div>
   <div class="stats" id="stats"></div>
 </header>
@@ -165,122 +224,213 @@ footer{margin-top:28px;font-size:12px;color:var(--muted);line-height:1.7;text-al
 <div class="grid">
   <section class="card">
     <svg class="peek tr" aria-hidden="true"><use href="#bear"/></svg>
+    <h2>룰렛 <span class="sub" id="poolCount"></span></h2>
     <div class="wheel-wrap">
       <div class="pointer" aria-hidden="true"></div>
       <canvas id="wheel" width="760" height="760" aria-label="점심 룰렛"></canvas>
       <div class="hub"><span>GO!</span></div>
     </div>
     <button class="spin" id="spin">🐰 룰렛 돌리기!</button>
-    <div class="result" id="result" aria-live="polite">
-      <div class="meta">버튼을 누르면 오늘의 점심이 정해집니다.</div>
-    </div>
     <div class="history" id="history"></div>
   </section>
 
   <section class="card">
     <svg class="peek tr" aria-hidden="true"><use href="#cat"/></svg>
-    <h2>필터 <span class="sub" id="poolCount"></span></h2>
-    <div class="chips" id="catChips"></div>
-    <div class="row" id="zoneRow"></div>
-    <div class="row">
-      <label><input type="checkbox" id="onlyRated" checked> 네이버 별점 <input type="number" id="minRate" min="0" max="5" step="0.1" value="4.5"> 이상만</label>
-      <label><input type="checkbox" id="includeUnrated" checked> 별점 미확인도 포함</label>
-      <label><input type="checkbox" id="skipRecent" checked> 최근 5회 당첨 제외</label>
-    </div>
-    <div class="note" id="dataNote"></div>
+    <h2>필터 <span class="sub">룰렛에 올릴 후보를 고릅니다</span></h2>
 
-    <h2 style="margin-top:22px">후보 목록 <span class="sub">별점 칸은 직접 수정 가능 · 브라우저에 저장됨</span></h2>
-    <div class="toolbar">
-      <input type="search" id="q" placeholder="상호·메뉴·건물 검색">
-      <button class="btn ghost" id="exportBtn">수정한 별점 JSON 내보내기</button>
-      <button class="btn ghost danger" id="resetBtn">로컬 수정 초기화</button>
+    <div class="fgroup">
+      <div class="lbl"><span>음식 분류</span><span><button data-cat="all">전체</button><button data-cat="none">전체 해제</button></span></div>
+      <div class="chips" id="catChips"></div>
     </div>
-    <div class="tablewrap">
-      <table id="tbl">
-        <thead><tr><th>포함</th><th>상호</th><th>분류·대표메뉴</th><th>네이버 별점</th><th>위치</th><th>지도</th></tr></thead>
-        <tbody></tbody>
-      </table>
+
+    <div class="fgroup">
+      <div class="lbl"><span>구역</span><span><button data-zone="all">전체</button><button data-zone="scope">범위 안만</button><button data-zone="none">전체 해제</button></span></div>
+      <div class="zones" id="zoneRow"></div>
     </div>
+
+    <div class="fgroup">
+      <div class="lbl"><span>KMAC 평가 조건</span></div>
+      <div class="row" style="margin-top:0">
+        <label>평균 별점
+          <select id="minKmac">
+            <option value="0">상관없음</option>
+            <option value="3">3.0 이상</option>
+            <option value="3.5">3.5 이상</option>
+            <option value="4">4.0 이상</option>
+            <option value="4.5">4.5 이상</option>
+          </select>
+        </label>
+        <label><input type="checkbox" id="includeUnrated" checked> 아직 평가 없는 곳도 포함</label>
+        <label><input type="checkbox" id="revisitOnly"> 재방문 의사 절반 이상만</label>
+      </div>
+    </div>
+
+    <div class="fgroup">
+      <div class="lbl"><span>기타</span></div>
+      <div class="row" style="margin-top:0">
+        <label><input type="checkbox" id="skipRecent" checked> 최근 5회 당첨 제외</label>
+        <label><input type="checkbox" id="skipExcluded" checked> 목록에서 체크 해제한 곳 제외</label>
+      </div>
+    </div>
+
+    <div class="summary"><span id="filterText"></span><span><span class="cnt" id="poolCnt">0</span>곳</span></div>
   </section>
 </div>
+
+<section class="card full">
+  <h2>후보지 목록 <span class="sub">체크를 끄면 룰렛에서 빠짐 · "평가"로 KMAC 별점 입력</span></h2>
+  <div class="toolbar">
+    <input type="search" id="q" placeholder="상호·메뉴·건물 검색">
+    <select id="sortBy">
+      <option value="zone">구역순</option>
+      <option value="kmac">KMAC 별점순</option>
+      <option value="name">이름순</option>
+      <option value="cat">분류순</option>
+    </select>
+    <button class="btn ghost" id="exportBtn">평가 내보내기</button>
+    <button class="btn ghost" id="importBtn">평가 가져오기</button>
+    <input type="file" id="importFile" accept="application/json" class="sr">
+    <button class="btn ghost danger" id="resetBtn">내 기록 초기화</button>
+  </div>
+  <div class="tablewrap">
+    <table id="tbl">
+      <thead><tr><th>포함</th><th>상호</th><th>분류·대표메뉴</th><th>위치</th><th>KMAC 별점</th><th></th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</section>
 
 <footer id="foot"></footer>
 </div>
 
+<!-- 결과 팝업 -->
+<div class="modal" id="resultModal" role="dialog" aria-modal="true">
+  <div class="dialog">
+    <button class="x" data-close>×</button>
+    <div class="result-body" id="resultBody"></div>
+  </div>
+</div>
+<!-- 평가 팝업 -->
+<div class="modal" id="rateModal" role="dialog" aria-modal="true">
+  <div class="dialog">
+    <button class="x" data-close>×</button>
+    <h3 id="rateTitle">KMAC 별점</h3>
+    <div class="field"><label>닉네임 (평가 구분용)</label><input type="text" id="who" maxlength="20" placeholder="예: 준원"></div>
+    <div class="rate-row"><span class="k">맛</span><div class="stars" data-key="taste"></div><span class="v" data-v="taste">0</span></div>
+    <div class="rate-row"><span class="k">청결</span><div class="stars" data-key="clean"></div><span class="v" data-v="clean">0</span></div>
+    <div class="rate-row"><span class="k">친절도</span><div class="stars" data-key="kind"></div><span class="v" data-v="kind">0</span></div>
+    <div class="field"><label>재방문 의사</label>
+      <div class="seg" id="revisitSeg"><button data-rv="y">Y 또 올래요</button><button data-rv="n">N 한 번이면 충분</button></div>
+    </div>
+    <div class="field"><label>비고</label><textarea id="note" maxlength="300" placeholder="추천 메뉴, 웨이팅, 가격 등"></textarea></div>
+    <div class="actions"><button class="btn primary" id="saveRate">저장</button><button class="btn ghost" data-close>취소</button></div>
+    <div class="reviews" id="reviewList"></div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
 <script src="data.js"></script>
+<script src="reviews.js"></script>
 <script>
 (function(){
-  const LS = { rates:'ccmm.rates.v1', hist:'ccmm.hist.v1', excl:'ccmm.excl.v1', filt:'ccmm.filt.v1' };
+  const LS = { reviews:'kmac.reviews.v1', hist:'ccmm.hist.v2', excl:'ccmm.excl.v2', filt:'ccmm.filt.v2', who:'kmac.who' };
   const load=(k,d)=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}};
   const save=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
+  const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const $=id=>document.getElementById(id);
 
   const data = window.RESTAURANTS || [];
   const meta = window.META || {};
-  let rates = load(LS.rates,{});      // 사용자가 입력한 별점 (id -> number|null)
-  let hist  = load(LS.hist,[]);       // 최근 당첨 id
-  let excl  = load(LS.excl,{});       // 수동 제외 (id -> true)
-  let filt  = load(LS.filt,{cats:[],zones:null});
-
-  const CATS = [...new Set(data.map(d=>d.cat))];
   const ZONES = meta.zones || [];
-  const inZone = z => !ZONES.find(x=>x.id===z) || ZONES.find(x=>x.id===z).inScope!==false;
-  if(!filt.zones) filt.zones = ZONES.filter(z=>z.inScope!==false).map(z=>z.id);
+  const CATS = [...new Set(data.map(d=>d.cat))];
+  const zl = id => (ZONES.find(z=>z.id===id)||{}).label || id;
 
-  const ratingOf = d => (rates[d.id]!==undefined && rates[d.id]!==null && rates[d.id]!=='') ? Number(rates[d.id]) : (d.naver ?? null);
+  let hist = load(LS.hist,[]);
+  let excl = load(LS.excl,{});
+  let filt = load(LS.filt,null) || { cats:[...CATS], zones:ZONES.filter(z=>z.inScope!==false).map(z=>z.id) };
+  let localReviews = load(LS.reviews,[]);
+
+  // ---------- KMAC 평가 ----------
+  const allReviews = () => {
+    const base = (window.REVIEWS||[]).map(r=>({...r, shared:true}));
+    const byId = new Map(base.map(r=>[r.rid,r]));
+    for (const r of localReviews) byId.set(r.rid, r);
+    return [...byId.values()];
+  };
+  const summary = id => {
+    const rs = allReviews().filter(r=>r.id===id);
+    if(!rs.length) return null;
+    const avg = k => rs.reduce((a,r)=>a+Number(r[k]||0),0)/rs.length;
+    const taste=avg('taste'), clean=avg('clean'), kind=avg('kind');
+    return { n:rs.length, taste, clean, kind, overall:(taste+clean+kind)/3, revisit: rs.filter(r=>r.revisit).length/rs.length };
+  };
+  const starText = v => { const full=Math.floor(v), half=v-full>=0.5; return '★'.repeat(full)+(half?'⯪':'')+'☆'.repeat(5-full-(half?1:0)); };
+  const kmacBadge = (sm, long=false) => sm ? `<span class="kmac"><span class="st">${starText(Math.round(sm.overall*2)/2)}</span> ${sm.overall.toFixed(1)}${long?` · 맛 ${sm.taste.toFixed(1)} 청결 ${sm.clean.toFixed(1)} 친절 ${sm.kind.toFixed(1)}`:''} · 재방문 ${Math.round(sm.revisit*100)}% · ${sm.n}명</span>` : '<span class="kmac">아직 평가 없음</span>';
 
   // ---------- 필터 UI ----------
-  const catChips = document.getElementById('catChips');
-  CATS.forEach(c=>{
-    const el=document.createElement('span'); el.className='chip'+(filt.cats.length===0||filt.cats.includes(c)?' on':''); el.textContent=c;
-    el.onclick=()=>{ 
-      if(filt.cats.length===0) filt.cats=[c]; // 전체에서 하나 고르면 단독 선택
-      else if(filt.cats.includes(c)){ filt.cats=filt.cats.filter(x=>x!==c); }
-      else filt.cats.push(c);
-      if(filt.cats.length===CATS.length) filt.cats=[];
-      save(LS.filt,filt); render();
-    };
-    catChips.appendChild(el);
+  const catChips=$('catChips');
+  function renderChips(){
+    catChips.innerHTML='';
+    CATS.forEach(c=>{
+      const el=document.createElement('span'); el.className='chip'+(filt.cats.includes(c)?' on':''); el.textContent=c;
+      el.onclick=()=>{ filt.cats = filt.cats.includes(c) ? filt.cats.filter(x=>x!==c) : [...filt.cats,c]; save(LS.filt,filt); render(); };
+      catChips.appendChild(el);
+    });
+  }
+  document.querySelectorAll('[data-cat]').forEach(b=>b.onclick=()=>{ filt.cats = b.dataset.cat==='all' ? [...CATS] : []; save(LS.filt,filt); render(); });
+  const zoneRow=$('zoneRow');
+  function renderZones(){
+    zoneRow.innerHTML='';
+    ZONES.forEach(z=>{
+      const l=document.createElement('label');
+      const cb=document.createElement('input'); cb.type='checkbox'; cb.checked=filt.zones.includes(z.id);
+      cb.onchange=()=>{ filt.zones = cb.checked ? [...filt.zones,z.id] : filt.zones.filter(x=>x!==z.id); save(LS.filt,filt); render(); };
+      l.appendChild(cb); l.append(' '+z.label+(z.inScope===false?' (범위 밖)':''));
+      zoneRow.appendChild(l);
+    });
+  }
+  document.querySelectorAll('[data-zone]').forEach(b=>b.onclick=()=>{
+    const m=b.dataset.zone; filt.zones = m==='all' ? ZONES.map(z=>z.id) : m==='scope' ? ZONES.filter(z=>z.inScope!==false).map(z=>z.id) : [];
+    save(LS.filt,filt); render();
   });
-  const zoneRow=document.getElementById('zoneRow');
-  ZONES.forEach(z=>{
-    const l=document.createElement('label');
-    const cb=document.createElement('input'); cb.type='checkbox'; cb.checked=filt.zones.includes(z.id);
-    cb.onchange=()=>{ filt.zones = cb.checked ? [...filt.zones,z.id] : filt.zones.filter(x=>x!==z.id); save(LS.filt,filt); render(); };
-    l.appendChild(cb); l.append(' '+z.label+(z.inScope===false?' (범위 밖)':''));
-    zoneRow.appendChild(l);
-  });
-  ['onlyRated','includeUnrated','skipRecent','minRate','q'].forEach(id=>document.getElementById(id).addEventListener('input',render));
+  ['minKmac','includeUnrated','revisitOnly','skipRecent','skipExcluded','q','sortBy'].forEach(id=>$(id).addEventListener('input',render));
 
   function pool(){
-    const onlyRated=document.getElementById('onlyRated').checked;
-    const incUn=document.getElementById('includeUnrated').checked;
-    const min=parseFloat(document.getElementById('minRate').value)||0;
-    const skip=document.getElementById('skipRecent').checked;
-    const recent=new Set(hist.slice(0,5));
+    const min=parseFloat($('minKmac').value)||0, incUn=$('includeUnrated').checked, rvOnly=$('revisitOnly').checked;
+    const skip=$('skipRecent').checked, skipEx=$('skipExcluded').checked, recent=new Set(hist.slice(0,5));
     return data.filter(d=>{
-      if(excl[d.id]) return false;
-      if(filt.cats.length && !filt.cats.includes(d.cat)) return false;
-      if(!filt.zones.includes(d.zone)) return false;
       if(d.closed) return false;
-      const r=ratingOf(d);
-      if(onlyRated){
-        if(r===null){ if(!incUn) return false; }
-        else if(r<min) return false;
-      }
+      if(skipEx && excl[d.id]) return false;
+      if(!filt.cats.includes(d.cat)) return false;
+      if(!filt.zones.includes(d.zone)) return false;
+      const sm=summary(d.id);
+      if(!sm){ if(!incUn) return false; if(rvOnly) return false; }
+      else { if(sm.overall<min) return false; if(rvOnly && sm.revisit<0.5) return false; }
       if(skip && recent.has(d.id)) return false;
       return true;
     });
   }
+  function filterText(){
+    const parts=[];
+    parts.push(filt.cats.length===CATS.length?'분류 전체':filt.cats.length?filt.cats.join('·'):'분류 없음');
+    const inScope=ZONES.filter(z=>z.inScope!==false).map(z=>z.id);
+    parts.push(filt.zones.length===ZONES.length?'구역 전체':(filt.zones.length===inScope.length&&inScope.every(z=>filt.zones.includes(z)))?'범위 안 구역':filt.zones.length?`구역 ${filt.zones.length}개`:'구역 없음');
+    const min=parseFloat($('minKmac').value)||0; if(min) parts.push(`KMAC ${min}↑`);
+    if(!$('includeUnrated').checked) parts.push('평가 있는 곳만');
+    if($('revisitOnly').checked) parts.push('재방문 50%↑');
+    if($('skipRecent').checked) parts.push('최근 5회 제외');
+    return parts.join(' · ');
+  }
 
   // ---------- 룰렛 ----------
-  const cv=document.getElementById('wheel'), ctx=cv.getContext('2d');
+  const cv=$('wheel'), ctx=cv.getContext('2d');
   const colors=['--w1','--w2','--w3','--w4','--w5','--w6','--w7','--w8'].map(v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim());
   let angle=0, spinning=false, current=[];
   function drawWheel(items){
     const n=items.length, R=cv.width/2, cx=R, cy=R;
     ctx.clearRect(0,0,cv.width,cv.height);
-    if(!n){ ctx.fillStyle='#ddd'; ctx.beginPath(); ctx.arc(cx,cy,R-4,0,Math.PI*2); ctx.fill();
-      ctx.fillStyle='#555'; ctx.font='bold 34px Noto Sans KR, sans-serif'; ctx.textAlign='center'; ctx.fillText('후보가 없습니다',cx,cy+12); return; }
+    if(!n){ ctx.fillStyle='#ffe6ef'; ctx.beginPath(); ctx.arc(cx,cy,R-4,0,Math.PI*2); ctx.fill();
+      ctx.fillStyle='#a97a90'; ctx.font='bold 34px Noto Sans KR, sans-serif'; ctx.textAlign='center'; ctx.fillText('후보가 없습니다',cx,cy+12); return; }
     const step=Math.PI*2/n;
     for(let i=0;i<n;i++){
       const a0=angle+i*step, a1=a0+step;
@@ -288,112 +438,178 @@ footer{margin-top:28px;font-size:12px;color:var(--muted);line-height:1.7;text-al
       ctx.fillStyle=colors[i%colors.length]; if(n%colors.length===1 && i===n-1) ctx.fillStyle=colors[(i+3)%colors.length];
       ctx.fill(); ctx.strokeStyle='#ffffff'; ctx.lineWidth=2.5; ctx.stroke();
       ctx.save(); ctx.translate(cx,cy); const mid=a0+step/2, left=Math.cos(mid)<0; ctx.rotate(left?mid+Math.PI:mid); ctx.textAlign=left?'left':'right'; ctx.fillStyle='#5a3648';
-      const fs = n>60?13:n>40?15:n>28?18:n>18?22:26; ctx.font=`700 ${fs}px Noto Sans KR, sans-serif`;
+      const fs = n>60?13:n>40?15:n>28?18:n>18?22:n>8?26:30; ctx.font=`700 ${fs}px Noto Sans KR, sans-serif`;
       let t=items[i].name; const maxW=R*0.62; while(ctx.measureText(t).width>maxW && t.length>2) t=t.slice(0,-1);
       if(t!==items[i].name) t=t.replace(/\s+$/,'')+'…';
       ctx.fillText(t,left?-(R-26):R-26,fs*0.36); ctx.restore();
     }
   }
-  function pickIndex(items){ // 포인터(12시 방향)가 가리키는 조각
-    const n=items.length, step=Math.PI*2/n;
-    const pointer=(-Math.PI/2 - angle) % (Math.PI*2);
-    const norm=(pointer+Math.PI*4)%(Math.PI*2);
-    return Math.floor(norm/step)%n;
-  }
-  const spinBtn=document.getElementById('spin');
-  spinBtn.onclick=()=>{
+  function pickIndex(items){ const n=items.length, step=Math.PI*2/n; const norm=(((-Math.PI/2-angle)%(Math.PI*2))+Math.PI*4)%(Math.PI*2); return Math.floor(norm/step)%n; }
+  const spinBtn=$('spin');
+  function spin(){
     if(spinning) return;
-    const items=pool(); if(!items.length){ alert('조건에 맞는 후보가 없습니다. 필터를 풀어 주세요.'); return; }
-    current=items; spinning=true; spinBtn.disabled=true;
-    document.getElementById('result').className='result';
-    document.getElementById('result').innerHTML='<div class="meta">돌아가는 중…</div>';
-    const target=Math.random()*Math.PI*2;
-    const total=Math.PI*2*(6+Math.random()*3)+target;
-    const dur=4200+Math.random()*1200, start=performance.now(), a0=angle;
-    const ease=t=>1-Math.pow(1-t,4);
-    (function frame(now){
-      const t=Math.min(1,(now-start)/dur);
-      angle=a0+total*ease(t); drawWheel(current);
-      if(t<1) requestAnimationFrame(frame); else finish(current[pickIndex(current)]);
-    })(start);
-  };
+    const items=pool(); if(!items.length){ toast('조건에 맞는 후보가 없어요. 필터를 풀어 주세요.'); return; }
+    closeModals(); current=items; spinning=true; spinBtn.disabled=true;
+    const total=Math.PI*2*(6+Math.random()*3)+Math.random()*Math.PI*2;
+    const dur=4200+Math.random()*1200, start=performance.now(), a0=angle, ease=t=>1-Math.pow(1-t,4);
+    (function frame(now){ const t=Math.min(1,(now-start)/dur); angle=a0+total*ease(t); drawWheel(current); if(t<1) requestAnimationFrame(frame); else finish(current[pickIndex(current)]); })(start);
+  }
+  spinBtn.onclick=spin;
+  const naverUrl=d=>'https://map.naver.com/p/search/'+encodeURIComponent(d.q||(d.name+' 여의도'));
+  const kakaoUrl=d=>'https://map.kakao.com/?q='+encodeURIComponent(d.q||(d.name+' 여의도'));
   function finish(d){
     spinning=false; spinBtn.disabled=false;
     hist=[d.id,...hist.filter(x=>x!==d.id)].slice(0,10); save(LS.hist,hist);
-    const r=ratingOf(d);
-    const el=document.getElementById('result'); el.className='result hit';
     const cheerer=['bunny','bear','cat'][Math.floor(Math.random()*3)];
     const lines=['오늘은 여기!','맛있게 먹고 와~','여기 어때?','고민 끝!','출발~'];
-    el.innerHTML=`
+    $('resultBody').innerHTML=`
       <div class="cheer"><svg aria-hidden="true"><use href="#${cheerer}"/></svg><span class="bubble">${lines[Math.floor(Math.random()*lines.length)]}</span></div>
       <div class="name">${esc(d.name)}</div>
       <div class="meta">${esc(d.cat)} · ${esc(d.menu||'')}${d.price?' · '+esc(d.price):''}</div>
-      <div class="addr">${esc(d.addr||'')}${d.bldg?' <span class="badge">'+esc(d.bldg)+'</span>':''}
-        ${r!==null?`<span class="badge ok">네이버 ★${r.toFixed(2).replace(/0$/,'')}${d.naverCount?' · 리뷰 '+d.naverCount.toLocaleString():''}</span>`:'<span class="badge na">별점 미확인</span>'}</div>
-      <div class="links">
-        <a class="naver" target="_blank" rel="noopener" href="${naverUrl(d)}">네이버지도</a>
-        <a class="kakao" target="_blank" rel="noopener" href="${kakaoUrl(d)}">카카오맵</a>
+      <div class="addr">${esc(d.addr||'')}${d.bldg?' <span class="badge">'+esc(d.bldg)+'</span>':''}<br><span class="badge">${esc(zl(d.zone))}</span>${d.src?' <span class="badge">'+esc(d.src)+'</span>':''}</div>
+      <div>${kmacBadge(summary(d.id),true)}</div>
+      <div class="actions">
+        <a class="btn" style="background:#03c75a;color:#fff;border-color:#03c75a" target="_blank" rel="noopener" href="${naverUrl(d)}">네이버지도</a>
+        <a class="btn" style="background:#fee500;color:#191600;border-color:#fee500" target="_blank" rel="noopener" href="${kakaoUrl(d)}">카카오맵</a>
+        <button class="btn primary" id="rateFromResult">KMAC 평가하기</button>
+      </div>
+      <div class="actions">
         <button class="btn" id="again">다시 돌리기</button>
         <button class="btn ghost" id="skipToday">오늘은 빼고 다시</button>
+        <button class="btn ghost" data-close>닫기</button>
       </div>`;
-    document.getElementById('again').onclick=()=>spinBtn.click();
-    document.getElementById('skipToday').onclick=()=>{ excl[d.id]=true; save(LS.excl,excl); render(); spinBtn.click(); };
+    openModal('resultModal');
+    $('again').onclick=spin;
+    $('skipToday').onclick=()=>{ excl[d.id]=true; save(LS.excl,excl); render(); spin(); };
+    $('rateFromResult').onclick=()=>openRate(d);
     renderHistory();
   }
-  const naverUrl=d=>'https://map.naver.com/p/search/'+encodeURIComponent(d.q||(d.name+' 여의도'));
-  const kakaoUrl=d=>'https://map.kakao.com/?q='+encodeURIComponent(d.q||(d.name+' 여의도'));
-  const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+  // ---------- 팝업 공통 ----------
+  function openModal(id){ $(id).classList.add('open'); }
+  function closeModals(){ document.querySelectorAll('.modal.open').forEach(m=>m.classList.remove('open')); }
+  document.querySelectorAll('.modal').forEach(m=>{ m.addEventListener('click',e=>{ if(e.target===m || e.target.closest('[data-close]')) closeModals(); }); });
+  document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeModals(); });
+  let toastT; function toast(msg){ const t=$('toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('show'),2200); }
+
+  // ---------- 별점 입력 위젯 (0.5 단위) ----------
+  const STAR = '<svg viewBox="0 0 24 24"><defs><linearGradient id="G" x1="0" x2="1"><stop offset="50%" stop-color="#f5a623"/><stop offset="50%" stop-color="#ffe6ef"/></linearGradient></defs><path d="M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4 6.1 20.5l1.2-6.5L2.5 9.4l6.6-.9z" stroke="#e8a6c0" stroke-width="1.2"/></svg>';
+  let draft={taste:0,clean:0,kind:0,revisit:null}; let rateTarget=null;
+  function buildStars(){
+    document.querySelectorAll('#rateModal .stars').forEach(row=>{
+      row.innerHTML='';
+      for(let i=1;i<=5;i++){
+        const st=document.createElement('div'); st.className='star'; st.innerHTML=STAR+`<button class="half l" data-val="${i-0.5}" aria-label="${i-0.5}점"></button><button class="half r" data-val="${i}" aria-label="${i}점"></button>`;
+        row.appendChild(st);
+      }
+      row.onclick=e=>{ const b=e.target.closest('.half'); if(!b) return; const k=row.dataset.key; const v=Number(b.dataset.val); draft[k] = (draft[k]===v && v===0.5) ? 0 : v; paintStars(); };
+    });
+  }
+  function paintStars(){
+    document.querySelectorAll('#rateModal .stars').forEach(row=>{
+      const v=draft[row.dataset.key]||0;
+      row.querySelectorAll('.star').forEach((st,i)=>{ const p=st.querySelector('path'); const idx=i+1; p.setAttribute('fill', v>=idx?'#f5a623': v>=idx-0.5?'url(#G)':'#ffe6ef'); });
+      document.querySelector(`[data-v="${row.dataset.key}"]`).textContent=v.toFixed(1);
+    });
+    document.querySelectorAll('#revisitSeg button').forEach(b=>b.classList.toggle('on', draft.revisit===(b.dataset.rv==='y')));
+  }
+  document.querySelectorAll('#revisitSeg button').forEach(b=>b.onclick=()=>{ draft.revisit=(b.dataset.rv==='y'); paintStars(); });
+  buildStars();
+  function openRate(d){
+    rateTarget=d; draft={taste:0,clean:0,kind:0,revisit:null};
+    $('rateTitle').textContent=`KMAC 별점 · ${d.name}`;
+    $('who').value=load(LS.who,''); $('note').value='';
+    paintStars(); renderReviewList(d); closeModals(); openModal('rateModal');
+  }
+  $('saveRate').onclick=()=>{
+    if(!rateTarget) return;
+    const who=$('who').value.trim();
+    if(!who) return toast('닉네임을 넣어 주세요.');
+    if(!draft.taste||!draft.clean||!draft.kind) return toast('맛·청결·친절도 별점을 모두 매겨 주세요.');
+    if(draft.revisit===null) return toast('재방문 의사를 골라 주세요.');
+    save(LS.who,who);
+    const r={ rid:Date.now().toString(36)+Math.random().toString(36).slice(2,6), id:rateTarget.id, who, taste:draft.taste, clean:draft.clean, kind:draft.kind, revisit:draft.revisit, note:$('note').value.trim(), date:new Date().toISOString().slice(0,10) };
+    localReviews.push(r); save(LS.reviews,localReviews);
+    toast('저장했어요. "평가 내보내기"로 팀과 공유할 수 있어요.');
+    renderReviewList(rateTarget); render();
+  };
+  function renderReviewList(d){
+    const rs=allReviews().filter(r=>r.id===d.id).sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+    const sm=summary(d.id);
+    $('reviewList').innerHTML = `<div class="sm" style="font-weight:900;color:var(--muted);font-size:12px">이 식당의 평가 ${rs.length}건 ${sm?'· 평균 '+sm.overall.toFixed(2):''}</div>` +
+      rs.map(r=>`<div class="review"><div><span class="who">${esc(r.who)}</span> <span class="sm">${esc(r.date||'')}${r.shared?' · 공유':''}</span><br>
+        맛 ${Number(r.taste).toFixed(1)} · 청결 ${Number(r.clean).toFixed(1)} · 친절 ${Number(r.kind).toFixed(1)} · 재방문 ${r.revisit?'Y':'N'}${r.note?'<br><span class="sm">'+esc(r.note)+'</span>':''}</div>
+        ${r.shared?'':`<button data-del="${esc(r.rid)}">삭제</button>`}</div>`).join('');
+    $('reviewList').querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>{ localReviews=localReviews.filter(x=>x.rid!==b.dataset.del); save(LS.reviews,localReviews); renderReviewList(d); render(); });
+  }
 
   // ---------- 표 ----------
   function renderTable(){
-    const q=(document.getElementById('q').value||'').trim().toLowerCase();
+    const q=($('q').value||'').trim().toLowerCase(), sort=$('sortBy').value;
     const tb=document.querySelector('#tbl tbody'); tb.innerHTML='';
     const pset=new Set(pool().map(d=>d.id));
-    const zl=id=>(ZONES.find(z=>z.id===id)||{}).label||id;
-    data.slice().sort((a,b)=>(ratingOf(b)??-1)-(ratingOf(a)??-1)).forEach(d=>{
-      const hay=[d.name,d.cat,d.menu,d.bldg,d.addr,zl(d.zone)].join(' ').toLowerCase();
+    const zi=id=>ZONES.findIndex(z=>z.id===id);
+    const rows=data.slice().sort((a,b)=>{
+      if(sort==='kmac'){ const sa=summary(a.id), sb=summary(b.id); return ((sb?sb.overall:-1)-(sa?sa.overall:-1)) || a.name.localeCompare(b.name,'ko'); }
+      if(sort==='name') return a.name.localeCompare(b.name,'ko');
+      if(sort==='cat') return a.cat.localeCompare(b.cat,'ko') || a.name.localeCompare(b.name,'ko');
+      return zi(a.zone)-zi(b.zone) || a.name.localeCompare(b.name,'ko');
+    });
+    rows.forEach(d=>{
+      const hay=[d.name,d.cat,d.menu,d.bldg,d.addr,zl(d.zone),d.src].join(' ').toLowerCase();
       if(q && !hay.includes(q)) return;
-      const r=ratingOf(d); const userSet=rates[d.id]!==undefined;
+      const sm=summary(d.id);
       const tr=document.createElement('tr'); if(!pset.has(d.id)) tr.className='off';
       tr.innerHTML=`
         <td><input type="checkbox" ${excl[d.id]?'':'checked'} title="후보에서 제외/포함"></td>
-        <td><div class="nm">${esc(d.name)}${d.closed?'<span class="badge out">폐업/미확인</span>':''}</div><div class="sm">${esc(d.bldg||'')}</div></td>
-        <td>${esc(d.cat)}<div class="sm">${esc(d.menu||'')}${d.price?' · '+esc(d.price):''}</div></td>
-        <td><input class="rate" type="number" min="0" max="5" step="0.01" value="${r===null?'':r}" placeholder="—" title="네이버 별점 직접 입력">
-            <div class="sm">${userSet?'수정됨':(d.naver!=null?'수집값'+(d.naverAt?' '+d.naverAt:''):'미확인')}${d.naverCount?' · 리뷰 '+d.naverCount.toLocaleString():''}${d.src?' · '+esc(d.src):''}</div></td>
+        <td><div class="nm">${esc(d.name)}${d.closed?'<span class="badge out">제외</span>':''}</div><div class="sm">${esc(d.bldg||'')}</div></td>
+        <td>${esc(d.cat)}<div class="sm">${esc(d.menu||'')}${d.price?' · '+esc(d.price):''}${d.src?'<br>'+esc(d.src):''}</div></td>
         <td class="sm">${esc(zl(d.zone))}<br>${esc(d.addr||'')}</td>
-        <td class="sm map"><a target="_blank" rel="noopener" href="${naverUrl(d)}">네이버</a><br><a target="_blank" rel="noopener" href="${kakaoUrl(d)}">카카오</a></td>`;
+        <td>${kmacBadge(sm)}</td>
+        <td class="map"><button class="btn" data-rate>평가</button><br><a target="_blank" rel="noopener" href="${naverUrl(d)}">네이버</a> · <a target="_blank" rel="noopener" href="${kakaoUrl(d)}">카카오</a></td>`;
       tr.querySelector('input[type=checkbox]').onchange=e=>{ if(e.target.checked) delete excl[d.id]; else excl[d.id]=true; save(LS.excl,excl); render(); };
-      const inp=tr.querySelector('input.rate');
-      inp.onchange=()=>{ const v=inp.value.trim(); if(v==='') delete rates[d.id]; else rates[d.id]=Number(v); save(LS.rates,rates); render(); };
+      tr.querySelector('[data-rate]').onclick=()=>openRate(d);
       tb.appendChild(tr);
     });
   }
   function renderHistory(){
-    const h=document.getElementById('history'); h.innerHTML='';
+    const h=$('history'); h.innerHTML='';
     if(!hist.length) return;
     const lbl=document.createElement('span'); lbl.textContent='최근 당첨'; h.appendChild(lbl);
     hist.slice(0,5).forEach(id=>{ const d=data.find(x=>x.id===id); if(!d) return; const s=document.createElement('span'); s.textContent=d.name; h.appendChild(s); });
   }
   function render(){
+    renderChips(); renderZones();
     const p=pool(); current=p; drawWheel(p);
-    const rated=data.filter(d=>ratingOf(d)!==null).length;
-    document.getElementById('poolCount').textContent=`지금 룰렛에 ${p.length}곳`;
-    document.getElementById('stats').innerHTML=`전체 후보 <b>${data.length}</b>곳 · 별점 확인 <b>${rated}</b>곳 · 룰렛 대상 <b>${p.length}</b>곳`;
-    document.getElementById('dataNote').innerHTML=meta.note||'';
-    document.getElementById('foot').innerHTML=meta.footer||'';
+    const rated=data.filter(d=>summary(d.id)).length, nrev=allReviews().length;
+    $('poolCount').textContent=`지금 ${p.length}곳`;
+    $('poolCnt').textContent=p.length; $('filterText').textContent=filterText();
+    $('stats').innerHTML=`전체 후보 <b>${data.length}</b>곳 · KMAC 평가 <b>${rated}</b>곳 (${nrev}건) · 룰렛 대상 <b>${p.length}</b>곳`;
+    $('foot').innerHTML=meta.footer||'';
     renderTable(); renderHistory();
   }
-  document.getElementById('exportBtn').onclick=()=>{
-    const out=data.map(d=>({id:d.id,name:d.name,naver:ratingOf(d)}));
-    const blob=new Blob([JSON.stringify(out,null,2)],{type:'application/json'});
-    const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='ccmm-naver-ratings.json'; a.click();
+
+  // ---------- 내보내기 / 가져오기 / 초기화 ----------
+  $('exportBtn').onclick=()=>{
+    const out=allReviews().map(({shared,...r})=>r);
+    if(!out.length) return toast('내보낼 평가가 없어요.');
+    const blob=new Blob([JSON.stringify(out,null,1)],{type:'application/json'});
+    const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=`kmac-reviews-${new Date().toISOString().slice(0,10)}.json`; a.click();
+    toast(`평가 ${out.length}건을 내보냈어요. reviews.js 에 붙여 넣으면 팀 공유!`);
   };
-  document.getElementById('resetBtn').onclick=()=>{
-    if(!confirm('이 브라우저에 저장된 별점 수정·제외·당첨 기록을 모두 지울까요?')) return;
-    rates={};excl={};hist=[];filt={cats:[],zones:ZONES.filter(z=>z.inScope!==false).map(z=>z.id)};
-    Object.values(LS).forEach(k=>{try{localStorage.removeItem(k)}catch(e){}});
-    location.reload();
+  $('importBtn').onclick=()=>$('importFile').click();
+  $('importFile').onchange=async e=>{
+    const f=e.target.files[0]; if(!f) return;
+    try{ const arr=JSON.parse(await f.text()); if(!Array.isArray(arr)) throw 0;
+      const ids=new Set(localReviews.map(r=>r.rid)); let n=0;
+      for(const r of arr){ if(r&&r.rid&&r.id&&!ids.has(r.rid)){ localReviews.push(r); ids.add(r.rid); n++; } }
+      save(LS.reviews,localReviews); render(); toast(`평가 ${n}건을 가져왔어요.`);
+    }catch{ toast('JSON 형식이 아니에요.'); }
+    e.target.value='';
+  };
+  $('resetBtn').onclick=()=>{
+    if(!confirm('이 브라우저에 저장된 내 평가·제외·당첨 기록·필터를 모두 지울까요? (reviews.js 의 공유 평가는 남습니다)')) return;
+    Object.values(LS).forEach(k=>{try{localStorage.removeItem(k)}catch(e){}}); location.reload();
   };
   render();
 })();
