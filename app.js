@@ -105,13 +105,14 @@
     const m=b.dataset.zone; filt.zones = m==='all' ? ZONES.map(z=>z.id) : m==='scope' ? ZONES.filter(z=>z.inScope!==false).map(z=>z.id) : [];
     save(LS.filt,filt); render();
   });
-  ['minKmac','includeUnrated','revisitOnly','skipRecent','skipExcluded','q','sortBy'].forEach(id=>$(id).addEventListener('input',render));
+  ['minKmac','includeUnrated','revisitOnly','skipRecent','skipExcluded','noFranchise','q','sortBy'].forEach(id=>$(id).addEventListener('input',render));
 
   function pool(){
     const min=parseFloat($('minKmac').value)||0, incUn=$('includeUnrated').checked, rvOnly=$('revisitOnly').checked;
-    const skip=$('skipRecent').checked, skipEx=$('skipExcluded').checked, recent=new Set(hist.slice(0,5));
+    const skip=$('skipRecent').checked, skipEx=$('skipExcluded').checked, noFr=($('noFranchise')||{}).checked, recent=new Set(hist.slice(0,5));
     return data.filter(d=>{
       if(d.closed) return false;
+      if(noFr && d.franchise) return false;
       if(skipEx && excl[d.id]) return false;
       if(!filt.cats.includes(d.cat)) return false;
       if(!filt.zones.includes(d.zone)) return false;
@@ -131,6 +132,7 @@
     if(!$('includeUnrated').checked) parts.push('평가 있는 곳만');
     if($('revisitOnly').checked) parts.push('재방문 50%↑');
     if($('skipRecent').checked) parts.push('최근 5회 제외');
+    if(($('noFranchise')||{}).checked) parts.push('프랜차이즈 제외');
     return parts.join(' · ');
   }
 
@@ -178,7 +180,7 @@
       <div class="cheer"><svg aria-hidden="true"><use href="#${cheerer}"/></svg><span class="bubble">${lines[Math.floor(Math.random()*lines.length)]}</span></div>
       <div class="name">${esc(d.name)}</div>
       <div class="meta">${esc(d.cat)} · ${esc(d.menu||'')}${d.price?' · '+esc(d.price):''}</div>
-      <div class="addr">${esc(d.addr||'')}${d.bldg?' <span class="badge">'+esc(d.bldg)+'</span>':''}<br><span class="badge">${esc(zl(d.zone))}</span>${d.src?' <span class="badge">'+esc(d.src)+'</span>':''}</div>
+      <div class="addr">${esc(d.addr||'')}${d.bldg?' <span class="badge">'+esc(d.bldg)+'</span>':''}<br><span class="badge">${esc(zl(d.zone))}</span>${d.franchise?' <span class="badge">프랜차이즈</span>':''}${d.src?' <span class="badge">'+esc(d.src)+'</span>':''}</div>
       <div>${kmacBadge(summary(d.id),true)}</div>
       <div class="actions">
         <a class="btn" style="background:#03c75a;color:#fff;border-color:#03c75a" target="_blank" rel="noopener" href="${naverUrl(d)}">네이버지도</a>
@@ -290,7 +292,7 @@
       const tr=document.createElement('tr'); if(!pset.has(d.id)) tr.className='off';
       tr.innerHTML=`
         <td><input type="checkbox" ${excl[d.id]?'':'checked'} title="후보에서 제외/포함"></td>
-        <td><div class="nm">${esc(d.name)}${d.closed?'<span class="badge out">제외</span>':''}</div><div class="sm">${esc(d.bldg||'')}</div></td>
+        <td><div class="nm">${esc(d.name)}${d.franchise?'<span class="badge">프랜차이즈</span>':''}${d.closed?'<span class="badge out">제외</span>':''}</div><div class="sm">${esc(d.bldg||'')}</div></td>
         <td>${esc(d.cat)}<div class="sm">${esc(d.menu||'')}${d.price?' · '+esc(d.price):''}${d.src?'<br>'+esc(d.src):''}</div></td>
         <td class="sm">${esc(zl(d.zone))}<br>${esc(d.addr||'')}</td>
         <td>${kmacBadge(sm)}</td>
