@@ -17,16 +17,12 @@ window.META = {
       "label": "국회대로 62~76길 골목 (순복음교회 뒤)"
     },
     {
-      "id": "main",
-      "label": "국회대로 본선 (LG에클라트·금산빌딩·파라곤)"
-    },
-    {
       "id": "west",
       "label": "국회 경내·KBS",
       "inScope": false
     }
   ],
-  "footer": "범위: 여의도공원 서측(여의공원로 기준) ~ 국회대로 골목까지(국회의사당역 출구 앞 상가는 제외). 국회 경내·KBS는 기본 제외. 카카오맵 조회(2026-09-28) 기준이며 술집·치킨 배달집·구내식당·한우·갈비·장어·복어·1인 2만 원 초과 확인 식당은 뺐습니다. 비고에 '확인 필요'가 있는 곳은 폐점·가격을 확인해 주세요. 목록 수정은 data.js."
+  "footer": "범위: 여의도공원 서측(여의공원로 기준) ~ 국회대로 골목까지(국회대로 본선·국회의사당역 출구 앞 상가는 제외). 국회 경내·KBS는 기본 제외. 카카오맵 조회(2026-09-28) 기준이며 술집·치킨 배달집·구내식당·한우·갈비·장어·복어·1인 2만 원 초과 확인 식당은 뺐습니다. 비고에 '확인 필요'가 있는 곳은 폐점·가격을 확인해 주세요. 목록 수정은 data.js."
 };
 
 window.RESTAURANTS = [
@@ -258,48 +254,6 @@ window.RESTAURANTS = [
   {"id": "hohwa", "name": "호화대반점", "cat": "중식", "menu": "노포 짜장·탕수육", "price": "1만원 안팎", "addr": "국회대로76길 18 지하1층", "bldg": "", "zone": "alley", "src": "", "q": ""},
   {"id": "k-전철우제주해장고향랭면국회의사당점", "name": "전철우제주해장고향랭면 국회의사당점", "cat": "한식", "menu": "냉면", "price": "", "addr": "국회대로76길 22", "bldg": "", "zone": "alley", "src": "", "q": "", "franchise": true},
   {"id": "seolyeon", "name": "설연향", "cat": "중식", "menu": "차돌짬뽕·유니짜장", "price": "", "addr": "국회대로76길 33 지하1층", "bldg": "중앙보훈회관", "zone": "alley", "src": "다이닝코드 58점 · 카카오 조회에 없음 · 영업 확인 필요", "q": ""},
-  // ── 국회대로 본선 (LG에클라트·금산빌딩·파라곤)
-  {"id": "k-국회보쌈", "name": "국회보쌈", "cat": "한식", "menu": "족발,보쌈", "price": "", "addr": "국회대로 750", "bldg": "금산빌딩", "zone": "main", "src": "", "q": ""},
-  {"id": "k-금산민속손칼국수", "name": "금산민속손칼국수", "cat": "한식", "menu": "칼국수", "price": "", "addr": "국회대로 750", "bldg": "금산빌딩", "zone": "main", "src": "", "q": ""},
-  {"id": "k-금산생대구", "name": "금산생대구", "cat": "한식", "menu": "매운탕,해물탕", "price": "", "addr": "국회대로 750", "bldg": "금산빌딩", "zone": "main", "src": "", "q": ""},
-  {"id": "k-너섬", "name": "너섬", "cat": "한식", "menu": "찌개,전골", "price": "", "addr": "국회대로 750", "bldg": "금산빌딩", "zone": "main", "src": "", "q": ""},
-  {"id": "k-여의도식당", "name": "여의도식당", "cat": "한식", "menu": "한식", "price": "", "addr": "국회대로 750", "bldg": "금산빌딩", "zone": "main", "src": "", "q": ""},
-  {"id": "k-여의명가", "name": "여의명가", "cat": "한식", "menu": "국밥", "price": "", "addr": "국회대로 750", "bldg": "금산빌딩", "zone": "main", "src": "", "q": ""},
-  {"id": "k-은성순대국", "name": "은성순대국", "cat": "한식", "menu": "순대", "price": "", "addr": "국회대로 750", "bldg": "금산빌딩", "zone": "main", "src": "", "q": ""},
-  {"id": "k-은주설렁탕", "name": "은주설렁탕", "cat": "한식", "menu": "설렁탕", "price": "", "addr": "국회대로 750", "bldg": "금산빌딩", "zone": "main", "src": "", "q": ""},
-  {"id": "k-한류관", "name": "한류관", "cat": "한식", "menu": "한식", "price": "", "addr": "국회대로 750", "bldg": "금산빌딩", "zone": "main", "src": "", "q": ""},
-  {"id": "dongnam", "name": "동남집", "cat": "한식", "menu": "양지곰탕", "price": "", "addr": "국회대로 750 1층", "bldg": "금산빌딩", "zone": "main", "src": "", "q": "", "franchise": true},
-  {"id": "jeonjujip", "name": "전주집", "cat": "한식", "menu": "김치찌개·김치전골·계란말이", "price": "", "addr": "국회대로 750 1층 (동명 타점포 가능성, 확인 필요)", "bldg": "금산빌딩", "zone": "main", "src": "", "q": ""},
-  {"id": "samdo", "name": "삼도일식", "cat": "일식", "menu": "일식 정식·대구탕 (룸)", "price": "", "addr": "국회대로 750 지하1층", "bldg": "금산빌딩 (국회 정문 맞은편)", "zone": "main", "src": "가격 미확인(고급 가능성, 확인 필요) · 점심 가격 확인 필요(2만 원 초과 가능)", "q": ""},
-  {"id": "k-간사이스타", "name": "간사이스타", "cat": "일식", "menu": "돈까스,우동", "price": "", "addr": "국회대로 780", "bldg": "LG여의도에클라트", "zone": "main", "src": "", "q": "", "franchise": true},
-  {"id": "k-금화쿵푸", "name": "금화쿵푸", "cat": "중식", "menu": "중국요리", "price": "", "addr": "국회대로 780", "bldg": "LG여의도에클라트", "zone": "main", "src": "", "q": "", "franchise": true},
-  {"id": "k-농민백암왕순대", "name": "농민백암왕순대", "cat": "한식", "menu": "순대", "price": "", "addr": "국회대로 780", "bldg": "LG여의도에클라트", "zone": "main", "src": "", "q": ""},
-  {"id": "k-다원", "name": "다원", "cat": "중식", "menu": "중국요리", "price": "", "addr": "국회대로 780", "bldg": "LG여의도에클라트", "zone": "main", "src": "", "q": ""},
-  {"id": "k-돈해진미", "name": "돈해진미", "cat": "한식", "menu": "육류,고기", "price": "", "addr": "국회대로 780", "bldg": "LG여의도에클라트", "zone": "main", "src": "", "q": ""},
-  {"id": "k-방배김밥여의도점", "name": "방배김밥 여의도점", "cat": "분식·기타", "menu": "방배김밥", "price": "", "addr": "국회대로 780", "bldg": "LG여의도에클라트", "zone": "main", "src": "", "q": "", "franchise": true},
-  {"id": "k-쉐나스픽by마꽁이네국회점", "name": "쉐나스픽 by.마꽁이네 국회점", "cat": "분식·기타", "menu": "분식", "price": "", "addr": "국회대로 780", "bldg": "LG여의도에클라트", "zone": "main", "src": "", "q": ""},
-  {"id": "k-스시나고미", "name": "스시나고미", "cat": "일식", "menu": "초밥,롤", "price": "", "addr": "국회대로 780", "bldg": "LG여의도에클라트", "zone": "main", "src": "점심 가격 확인 필요(2만 원 초과 가능)", "q": ""},
-  {"id": "k-스타우동오뎅", "name": "스타우동오뎅", "cat": "일식", "menu": "돈까스,우동", "price": "", "addr": "국회대로 780", "bldg": "LG여의도에클라트", "zone": "main", "src": "", "q": "", "franchise": true},
-  {"id": "k-오가네전주콩나물해장국", "name": "오가네 전주콩나물해장국", "cat": "한식", "menu": "해장국", "price": "", "addr": "국회대로 780", "bldg": "LG여의도에클라트", "zone": "main", "src": "", "q": ""},
-  {"id": "k-전주현대옥서울국회의사당점", "name": "전주현대옥 서울국회의사당점", "cat": "한식", "menu": "전주현대옥", "price": "", "addr": "국회대로 780", "bldg": "LG여의도에클라트", "zone": "main", "src": "", "q": "", "franchise": true},
-  {"id": "k-정직유부서여의도점", "name": "정직유부 서여의도점", "cat": "일식", "menu": "정직유부", "price": "", "addr": "국회대로 780", "bldg": "LG여의도에클라트", "zone": "main", "src": "", "q": "", "franchise": true},
-  {"id": "k-조pd키친", "name": "조PD키친", "cat": "분식·기타", "menu": "도시락", "price": "", "addr": "국회대로 780", "bldg": "LG여의도에클라트", "zone": "main", "src": "", "q": ""},
-  {"id": "k-조선보울여의도점", "name": "조선보울 여의도점", "cat": "분식·기타", "menu": "샐러드", "price": "", "addr": "국회대로 780", "bldg": "LG여의도에클라트", "zone": "main", "src": "", "q": "", "franchise": true},
-  {"id": "k-킹콩부대찌개서여의도점", "name": "킹콩부대찌개 서여의도점", "cat": "한식", "menu": "킹콩부대찌개", "price": "", "addr": "국회대로 780", "bldg": "LG여의도에클라트", "zone": "main", "src": "", "q": "", "franchise": true},
-  {"id": "k-향토식당", "name": "향토식당", "cat": "한식", "menu": "한식", "price": "", "addr": "국회대로 780", "bldg": "LG여의도에클라트", "zone": "main", "src": "", "q": ""},
-  {"id": "k-향토칼국수", "name": "향토칼국수", "cat": "한식", "menu": "칼국수", "price": "", "addr": "국회대로 780", "bldg": "LG여의도에클라트", "zone": "main", "src": "", "q": ""},
-  {"id": "k-힐담채", "name": "힐담채", "cat": "한식", "menu": "한식", "price": "", "addr": "국회대로 780", "bldg": "LG여의도에클라트", "zone": "main", "src": "", "q": ""},
-  {"id": "kimsambo", "name": "김삼보 여의도점", "cat": "한식", "menu": "1인 김치찌개·솥밥 (24시)", "price": "", "addr": "국회대로 780 1층", "bldg": "LG여의도에클라트", "zone": "main", "src": "1번 출구 156m", "q": "", "franchise": true},
-  {"id": "basburger", "name": "바스버거 국회의사당점", "cat": "양식", "menu": "수제버거·감자칩", "price": "", "addr": "국회대로 780 지하1층", "bldg": "LG여의도에클라트", "zone": "main", "src": "다이닝코드 ★4.5 · 1번 출구 2분", "q": "", "franchise": true},
-  {"id": "sunnam", "name": "순남시래기 서여의도점", "cat": "한식", "menu": "시래기국·수육정식", "price": "8천~1.3만", "addr": "국회대로 780 지하1층", "bldg": "LG여의도에클라트", "zone": "main", "src": "", "q": "", "franchise": true},
-  {"id": "k-금조온흑염소전문점국회의사당본점", "name": "금조온 흑염소 전문점 국회의사당 본점", "cat": "한식", "menu": "한식", "price": "", "addr": "국회대로 800", "bldg": "여의도파라곤", "zone": "main", "src": "", "q": "", "franchise": true},
-  {"id": "k-대방골", "name": "대방골", "cat": "한식", "menu": "한정식", "price": "", "addr": "국회대로 800", "bldg": "여의도파라곤", "zone": "main", "src": "점심 가격 확인 필요(2만 원 초과 가능)", "q": ""},
-  {"id": "k-어진여의도점", "name": "어진 여의도점", "cat": "한식", "menu": "냉면", "price": "", "addr": "국회대로 800", "bldg": "여의도파라곤", "zone": "main", "src": "", "q": ""},
-  {"id": "k-차이윤서여의도점", "name": "차이윤 서여의도점", "cat": "중식", "menu": "중식", "price": "", "addr": "국회대로 800", "bldg": "여의도파라곤", "zone": "main", "src": "", "q": ""},
-  {"id": "k-창고43서여의도점", "name": "창고43 서여의도점", "cat": "한식", "menu": "한식", "price": "", "addr": "국회대로 800", "bldg": "여의도파라곤", "zone": "main", "src": "", "q": "", "franchise": true},
-  {"id": "k-테트리스찜닭영등포점", "name": "테트리스찜닭 영등포점", "cat": "한식", "menu": "닭요리", "price": "", "addr": "국회대로 800", "bldg": "여의도파라곤", "zone": "main", "src": "", "q": "", "franchise": true},
-  {"id": "k-화담", "name": "화담", "cat": "일식", "menu": "일식", "price": "", "addr": "국회대로 800", "bldg": "여의도파라곤", "zone": "main", "src": "", "q": ""},
-  {"id": "wanttuk", "name": "완뚝순두부 여의도점", "cat": "한식", "menu": "순두부·돌솥밥 (24시)", "price": "", "addr": "국회대로 800 1층", "bldg": "여의도파라곤", "zone": "main", "src": "", "q": "", "franchise": true},
   // ── 국회 경내·KBS
   {"id": "k-고샌드kbs점", "name": "고샌드 KBS점", "cat": "양식", "menu": "샌드위치", "price": "", "addr": "여의공원로 13", "bldg": "KBS", "zone": "west", "src": "", "q": "", "franchise": true},
   {"id": "k-오밍고박스", "name": "오밍고박스", "cat": "한식", "menu": "한식", "price": "", "addr": "여의공원로 13", "bldg": "KBS", "zone": "west", "src": "", "q": "", "franchise": true},

@@ -16,16 +16,12 @@ window.META = {
       "label": "국회대로 62~76길 골목 (순복음교회 뒤)"
     },
     {
-      "id": "main",
-      "label": "국회대로 본선 (LG에클라트·금산빌딩·파라곤)"
-    },
-    {
       "id": "west",
       "label": "국회 경내·KBS",
       "inScope": false
     }
   ],
-  "footer": "범위: 여의도공원 서측(여의공원로 기준) ~ 국회대로 골목까지(국회의사당역 출구 앞 상가는 제외). 국회 경내·KBS는 기본 제외. 카카오맵 조회(2026-09-28) 기준이며 비고에 '확인 필요'가 있는 곳은 폐점·이전 가능성이 있습니다. 목록 수정은 cafe/data.js."
+  "footer": "범위: 여의도공원 서측(여의공원로 기준) ~ 국회대로 골목까지(국회대로 본선·국회의사당역 출구 앞 상가는 제외). 국회 경내·KBS는 기본 제외. 카카오맵 조회(2026-09-28) 기준이며 비고에 '확인 필요'가 있는 곳은 폐점·이전 가능성이 있습니다. 목록 수정은 cafe/data.js."
 };
 
 window.RESTAURANTS = [
@@ -103,20 +99,6 @@ window.RESTAURANTS = [
   {"id": "cafe-mammoth", "name": "매머드익스프레스 서여의도점", "cat": "커피", "menu": "대용량 아메리카노", "price": "", "addr": "국회대로76길 18 1층 4호", "bldg": "순복음교회 맞은편", "zone": "alley", "src": "평일 07:00~18:00 · 토 휴무", "q": "", "franchise": true},
   {"id": "cafe-coffeebay", "name": "커피베이 여의도순복음교회점", "cat": "커피", "menu": "커피", "price": "", "addr": "국회대로76길 25 1층", "bldg": "여의도순복음교회 앞", "zone": "alley", "src": "커피소녀와 같은 주소로 검색됨 · 확인 필요", "q": "", "franchise": true},
   {"id": "cafe-cbtl-church", "name": "커피빈 여의도순복음교회옆점", "cat": "커피", "menu": "아이스블렌디드·커피", "price": "", "addr": "여의서로 43", "bldg": "한서리버파크 (순복음교회 옆)", "zone": "alley", "src": "1번 출구 760m", "q": "", "franchise": true},
-  // ── 국회대로 본선 (LG에클라트·금산빌딩·파라곤)
-  {"id": "cafe-baristahee", "name": "바리스타희", "cat": "커피", "menu": "커피", "price": "", "addr": "국회대로 750", "bldg": "금산빌딩", "zone": "main", "src": "", "q": ""},
-  {"id": "cafe-k13018792", "name": "시원재", "cat": "차·음료", "menu": "", "price": "", "addr": "국회대로 750", "bldg": "금산빌딩", "zone": "main", "src": "", "q": ""},
-  {"id": "cafe-k1730258822", "name": "더벤티 국회대로점", "cat": "커피", "menu": "", "price": "", "addr": "국회대로 780", "bldg": "LG여의도에클라트", "zone": "main", "src": "", "q": "", "franchise": true},
-  {"id": "cafe-k792398335", "name": "매머드익스프레스 여의도에클라트점", "cat": "커피", "menu": "", "price": "", "addr": "국회대로 780", "bldg": "LG여의도에클라트", "zone": "main", "src": "", "q": "", "franchise": true},
-  {"id": "cafe-k2090869227", "name": "우지커피 서여의도점", "cat": "커피", "menu": "", "price": "", "addr": "국회대로 780", "bldg": "LG여의도에클라트", "zone": "main", "src": "", "q": "", "franchise": true},
-  {"id": "cafe-k1193221399", "name": "커피사피엔스 여의도국회대로점", "cat": "커피", "menu": "", "price": "", "addr": "국회대로 780", "bldg": "LG여의도에클라트", "zone": "main", "src": "", "q": "", "franchise": true},
-  {"id": "cafe-k1350722571", "name": "컴포즈커피 국회의사당역점", "cat": "커피", "menu": "", "price": "", "addr": "국회대로 780", "bldg": "LG여의도에클라트", "zone": "main", "src": "", "q": "", "franchise": true},
-  {"id": "cafe-k454941773", "name": "케이팥", "cat": "디저트", "menu": "", "price": "", "addr": "국회대로 780", "bldg": "LG여의도에클라트", "zone": "main", "src": "", "q": ""},
-  {"id": "cafe-k643188286", "name": "한입원바이트", "cat": "디저트", "menu": "", "price": "", "addr": "국회대로 780", "bldg": "LG여의도에클라트", "zone": "main", "src": "", "q": ""},
-  {"id": "cafe-namdaemun", "name": "남대문커피", "cat": "커피", "menu": "아메리카노", "price": "", "addr": "국회대로 780 1층", "bldg": "LG여의도에클라트", "zone": "main", "src": "평일 07:00~20:00", "q": "", "franchise": true},
-  {"id": "cafe-sbux-gukhoe", "name": "스타벅스 국회대로점", "cat": "커피", "menu": "아메리카노·프라푸치노", "price": "", "addr": "국회대로 786", "bldg": "", "zone": "main", "src": "1번 출구 도보 4분 · 06:30~20:00", "q": "", "franchise": true},
-  {"id": "cafe-k80999414", "name": "볼스 여의도점", "cat": "커피", "menu": "", "price": "", "addr": "국회대로 800", "bldg": "여의도파라곤", "zone": "main", "src": "", "q": ""},
-  {"id": "cafe-pascucci", "name": "파스쿠찌 서여의도점", "cat": "커피", "menu": "커피·젤라또·티라미수", "price": "", "addr": "국회대로 800 1층", "bldg": "여의도파라곤", "zone": "main", "src": "평일 08:00~22:00 · 6천 원 이상 2시간 주차", "q": "", "franchise": true},
   // ── 국회 경내·KBS
   {"id": "cafe-k24962165", "name": "르뽀미에 여의도KBS점", "cat": "베이커리", "menu": "", "price": "", "addr": "여의공원로 13", "bldg": "KBS", "zone": "west", "src": "", "q": "", "franchise": true},
   {"id": "cafe-bohemian", "name": "보헤미안박이추커피 KBS점", "cat": "커피", "menu": "핸드드립 커피", "price": "", "addr": "여의공원로 13 신관 2층 로비", "bldg": "KBS 신관", "zone": "west", "src": "매일 08:00~20:00", "q": "", "franchise": true},
