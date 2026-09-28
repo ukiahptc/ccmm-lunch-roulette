@@ -151,6 +151,7 @@
       ctx.beginPath(); ctx.moveTo(cx,cy); ctx.arc(cx,cy,R-4,a0,a1); ctx.closePath();
       ctx.fillStyle=colors[i%colors.length]; if(n%colors.length===1 && i===n-1) ctx.fillStyle=colors[(i+3)%colors.length];
       ctx.fill(); ctx.strokeStyle='#ffffff'; ctx.lineWidth=2.5; ctx.stroke();
+      if(n>120) continue; // 후보가 너무 많으면 글자는 생략 (결과는 팝업으로 확인)
       ctx.save(); ctx.translate(cx,cy); const mid=a0+step/2, left=Math.cos(mid)<0; ctx.rotate(left?mid+Math.PI:mid); ctx.textAlign=left?'left':'right'; ctx.fillStyle='#5a3648';
       const fs = n>90?11:n>60?13:n>40?15:n>28?18:n>18?22:n>8?26:30; ctx.font=`700 ${fs}px Noto Sans KR, sans-serif`;
       let t=items[i].name; const maxW=R*0.62; while(ctx.measureText(t).width>maxW && t.length>2) t=t.slice(0,-1);
@@ -312,7 +313,7 @@
     renderChips(); renderZones();
     const p=pool(); current=p; drawWheel(p);
     const rated=data.filter(d=>summary(d.id)).length, nrev=allReviews().length;
-    $('poolCount').textContent=`지금 ${p.length}곳`;
+    $('poolCount').textContent=`지금 ${p.length}곳`+(p.length>120?' · 글자는 120곳 이하일 때 표시':'');
     $('poolCnt').textContent=p.length; $('filterText').textContent=filterText();
     $('stats').innerHTML=`전체 후보 <b>${data.length}</b>곳 · KMAC 평가 <b>${rated}</b>곳 (${nrev}건) · 룰렛 대상 <b>${p.length}</b>곳`;
     $('foot').innerHTML=meta.footer||'';
