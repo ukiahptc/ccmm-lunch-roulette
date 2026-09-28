@@ -6,10 +6,10 @@
  *       → 웹 앱 URL 을 저장소의 config.js 에 넣는다.
  *
  * 시트: 첫 시트에 아래 헤더가 자동으로 만들어진다.
- *   rid | id | who | taste | clean | kind | revisit | note | date | created_at | deleted
+ *   rid | id | who | taste | clean | kind | revisit | note | date | created_at | deleted | price
  */
 var SHEET_NAME = 'reviews';
-var HEADER = ['rid', 'id', 'who', 'taste', 'clean', 'kind', 'revisit', 'note', 'date', 'created_at', 'deleted'];
+var HEADER = ['rid', 'id', 'who', 'taste', 'clean', 'kind', 'revisit', 'note', 'date', 'created_at', 'deleted', 'price'];
 
 function getSheet_() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
@@ -20,6 +20,11 @@ function getSheet_() {
     sh.insertRowBefore(1);
     sh.getRange(1, 1, 1, HEADER.length).setValues([HEADER]).setFontWeight('bold');
     sh.setFrozenRows(1);
+  } else {
+    // 나중에 추가된 열(price 등)이 헤더에 없으면 채워 넣는다
+    for (var c = 0; c < HEADER.length; c++) {
+      if (first[c] !== HEADER[c]) sh.getRange(1, c + 1).setValue(HEADER[c]).setFontWeight('bold');
+    }
   }
   return sh;
 }
@@ -41,7 +46,8 @@ function listReviews_() {
       rid: String(r[0]), id: String(r[1]), who: String(r[2]),
       taste: Number(r[3]), clean: Number(r[4]), kind: Number(r[5]),
       revisit: r[6] === true || r[6] === 'TRUE' || r[6] === 'Y',
-      note: String(r[7] || ''), date: r[8] instanceof Date ? Utilities.formatDate(r[8], 'Asia/Seoul', 'yyyy-MM-dd') : String(r[8] || '')
+      note: String(r[7] || ''), date: r[8] instanceof Date ? Utilities.formatDate(r[8], 'Asia/Seoul', 'yyyy-MM-dd') : String(r[8] || ''),
+      price: Number(r[11]) > 0 ? Number(r[11]) : null
     });
   }
   return out;
@@ -67,7 +73,7 @@ function doPost(e) {
       if (ids.indexOf(String(r.rid)) >= 0) return json_({ ok: true, dup: true });
       sh.appendRow([String(r.rid), String(r.id), String(r.who).slice(0, 20), Number(r.taste), Number(r.clean), Number(r.kind),
         r.revisit ? 'Y' : 'N', String(r.note || '').slice(0, 300), String(r.date || Utilities.formatDate(new Date(), 'Asia/Seoul', 'yyyy-MM-dd')),
-        new Date(), false]);
+        new Date(), false, Number(r.price) > 0 ? Number(r.price) : '']);
       return json_({ ok: true });
     }
     if (body.action === 'delete') {
