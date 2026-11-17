@@ -3,9 +3,15 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>CCMM 디저트 룰렛</title>
+<title>여의도 점심먹기 · 디저트</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧸</text></svg>">
-<meta name="description" content="여의도 CCMM빌딩 주변(여의도공원 서측 ~ 국회의사당역) 카페·디저트 룰렛 + KMAC 별점">
+<meta name="description" content="서여의도(여의도공원 서측~국회대로 골목) 직장인이 직접 매기는 카페·디저트 별점과 룰렛">
+<link rel="manifest" href="../manifest.webmanifest">
+<meta name="theme-color" content="#b8804f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="여의도 점심먹기">
+<link rel="apple-touch-icon" href="../icons/icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../app.css">
@@ -105,9 +111,9 @@ th{background:#f8eddd}
 <header>
   <div class="brand">
     <svg class="mascot" aria-hidden="true"><use href="#bearmug"/></svg>
-    <h1>CCMM 디저트 룰렛 <small>여의도공원 서측 · 국회의사당역까지 · 카페·디저트 · KMAC 별점</small></h1>
+    <h1>여의도 디저트먹기 <small>서여의도 직장인이 직접 매기는 카페·디저트 별점 · 룰렛</small></h1>
   </div>
-  <div class="nav"><a href="../">🍚 점심 룰렛</a><div class="stats" id="stats"></div></div>
+  <div class="nav"><button class="btn ghost" id="installBtn" hidden>📲 앱으로 설치</button><a href="../ranking.html">🏆 랭킹</a><a href="../">🍚 점심</a><div class="stats" id="stats"></div></div>
 </header>
 <svg class="village" viewBox="0 0 1000 120" preserveAspectRatio="xMidYMax meet" aria-hidden="true">
   <use href="#cloud" x="60" y="4" width="90" height="54"/><use href="#cloud" x="700" y="0" width="110" height="66"/><use href="#cloud" x="880" y="18" width="70" height="42"/>
@@ -122,7 +128,7 @@ th{background:#f8eddd}
 <div class="grid">
   <section class="card">
     <svg class="peek tr" aria-hidden="true"><use href="#bear"/></svg>
-    <h2>룰렛 <span class="sub" id="poolCount"></span></h2>
+    <h2>오늘 뭐 먹지? <span class="sub" id="poolCount"></span></h2>
     <div class="wheel-wrap">
       <div class="pointer" aria-hidden="true"></div>
       <canvas id="wheel" width="760" height="760" aria-label="점심 룰렛"></canvas>
@@ -147,7 +153,7 @@ th{background:#f8eddd}
     </div>
 
     <div class="fgroup">
-      <div class="lbl"><span>KMAC 평가 조건</span></div>
+      <div class="lbl"><span>별점 조건</span></div>
       <div class="row" style="margin-top:0">
         <label>평균 별점
           <select id="minKmac">
@@ -182,7 +188,7 @@ th{background:#f8eddd}
     <input type="search" id="q" placeholder="상호·메뉴·건물 검색">
     <select id="sortBy">
       <option value="zone">구역순</option>
-      <option value="kmac">KMAC 별점순</option>
+      <option value="kmac">별점순</option>
       <option value="name">이름순</option>
       <option value="cat">분류순</option>
     </select>
@@ -194,7 +200,7 @@ th{background:#f8eddd}
   </div>
   <div class="tablewrap">
     <table id="tbl">
-      <thead><tr><th>포함</th><th>상호</th><th>분류·대표메뉴</th><th>위치</th><th>KMAC 별점</th><th></th></tr></thead>
+      <thead><tr><th>포함</th><th>상호</th><th>분류·대표메뉴</th><th>위치</th><th>직장인 별점</th><th></th></tr></thead>
       <tbody></tbody>
     </table>
   </div>
@@ -214,8 +220,8 @@ th{background:#f8eddd}
 <div class="modal" id="rateModal" role="dialog" aria-modal="true">
   <div class="dialog">
     <button class="x" data-close>×</button>
-    <h3 id="rateTitle">KMAC 별점</h3>
-    <div class="field"><label>닉네임 (평가 구분용)</label><input type="text" id="who" maxlength="20" placeholder="예: 준원"></div>
+    <h3 id="rateTitle">별점 남기기</h3>
+    <div class="field"><label>닉네임 (본인 평가 구분·삭제용, 계속 같은 걸 써 주세요)</label><input type="text" id="who" maxlength="20" placeholder="예: 준원"></div>
     <div class="rate-row"><span class="k">맛</span><div class="stars" data-key="taste"></div><span class="v" data-v="taste">0</span></div>
     <div class="rate-row"><span class="k">청결</span><div class="stars" data-key="clean"></div><span class="v" data-v="clean">0</span></div>
     <div class="rate-row"><span class="k">친절도</span><div class="stars" data-key="kind"></div><span class="v" data-v="kind">0</span></div>
@@ -223,7 +229,8 @@ th{background:#f8eddd}
     <div class="field"><label>재방문 의사</label>
       <div class="seg" id="revisitSeg"><button data-rv="y">Y 또 올래요</button><button data-rv="n">N 한 번이면 충분</button></div>
     </div>
-    <div class="field"><label>비고</label><textarea id="note" maxlength="300" placeholder="추천 메뉴, 웨이팅, 가격 등"></textarea></div>
+    <div class="field"><label>추천 메뉴 (한 가지)</label><input type="text" id="dish" maxlength="30" placeholder="예: 돼지국밥, 아인슈페너"></div>
+    <div class="field"><label>한 줄 비고 (웨이팅·양·분위기 등 사실 위주로)</label><textarea id="note" maxlength="200" placeholder="예: 12시엔 10분 대기, 양 많음"></textarea></div>
     <div class="actions"><button class="btn primary" id="saveRate">저장</button><button class="btn ghost" data-close>취소</button></div>
     <div class="reviews" id="reviewList"></div>
   </div>

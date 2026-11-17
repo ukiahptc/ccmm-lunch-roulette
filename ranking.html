@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>여의도 점심먹기 · 랭킹</title>
+<meta name="description" content="서여의도 직장인이 직접 매긴 점심·디저트 별점 랭킹">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#f27fa9">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="app.css">
+<style>
+:root{
+  --bg:#fff6f9; --surface:#ffffff; --ink:#5a3648; --muted:#a97a90; --line:#f7cfe0;
+  --accent:#f27fa9; --accent-dk:#d9538a; --accent-ink:#fff; --chip:#ffe6ef; --chip-on:#f27fa9; --chip-on-ink:#fff;
+  --shadow:0 10px 28px rgba(242,127,169,.16);
+}
+body{background:radial-gradient(circle at 15% 10%, #ffe4ee 0, transparent 34%), radial-gradient(circle at 85% 20%, #fff0e6 0, transparent 30%), var(--bg);background-attachment:fixed}
+.tabs{display:flex;gap:8px;flex-wrap:wrap}
+.tabs .chip{font-size:14px;padding:9px 16px}
+.rank{display:grid;gap:10px;margin-top:12px}
+.item{display:grid;grid-template-columns:44px minmax(0,1fr) auto;gap:12px;align-items:center;background:#fff;border:2px solid var(--line);border-radius:18px;padding:12px 14px}
+.item .no{font-family:"Jua",sans-serif;font-size:26px;color:var(--accent-dk);text-align:center}
+.item .no.top{color:#f5a623}
+.item .nm{font-weight:900;font-size:16px}
+.item .sub{color:var(--muted);font-size:12px;margin-top:2px}
+.item .score{text-align:right;font-weight:900;color:var(--accent-dk);font-size:15px;white-space:nowrap}
+.item .score .st{color:#f5a623;letter-spacing:-1px;display:block;font-size:13px}
+.item .dish{display:inline-block;background:#fff3f7;border:1px solid var(--line);border-radius:999px;padding:1px 8px;font-size:11px;font-weight:900;color:var(--accent-dk);margin-top:4px;margin-right:4px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-top:12px}
+.kpi{background:#fff;border:2px solid var(--line);border-radius:16px;padding:12px;text-align:center}
+.kpi b{display:block;font-family:"Jua",sans-serif;font-size:28px;color:var(--accent-dk)}
+.kpi span{font-size:12px;color:var(--muted);font-weight:700}
+.bld{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.bld span{font-size:12px;padding:4px 10px;border-radius:999px;background:var(--chip);color:var(--accent-dk);font-weight:700}
+.empty{padding:28px;text-align:center;color:var(--muted);font-weight:700;background:#fff;border:2px dashed var(--line);border-radius:18px;margin-top:12px}
+@media(max-width:520px){.item{grid-template-columns:36px minmax(0,1fr) auto;padding:10px 12px}.item .no{font-size:22px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div class="brand">
+    <img src="icons/icon-192.png" alt="" class="mascot" style="border-radius:22px">
+    <h1>여의도 점심먹기 · 랭킹 <small>서여의도 직장인이 직접 매긴 별점 순위</small></h1>
+  </div>
+  <div class="nav"><a href="./">🍚 점심 룰렛</a><a href="cafe/">☕ 디저트 룰렛</a></div>
+</header>
+
+<section class="card full" style="margin-top:8px">
+  <div class="kpis" id="kpis"></div>
+  <div class="bld" id="bld"></div>
+</section>
+
+<section class="card full">
+  <h2>순위 <span class="sub" id="syncNote"></span></h2>
+  <div class="tabs" id="tabs">
+    <span class="chip on" data-tab="lunch">🍚 점심</span>
+    <span class="chip" data-tab="cafe">☕ 디저트</span>
+  </div>
+  <div class="row">
+    <label>기준
+      <select id="sortBy">
+        <option value="overall">종합 별점</option>
+        <option value="taste">맛</option>
+        <option value="price">가성비</option>
+        <option value="revisit">재방문율</option>
+        <option value="n">평가 많은 순</option>
+        <option value="recent">최근 평가</option>
+      </select>
+    </label>
+    <label>최소 평가
+      <select id="minN"><option value="1">1건</option><option value="2">2건</option><option value="3" selected>3건</option><option value="5">5건</option></select>
+    </label>
+    <label><input type="checkbox" id="noFr"> 프랜차이즈 제외</label>
+  </div>
+  <div class="rank" id="rank"></div>
+</section>
+
+<footer>별점은 각 페이지의 "별점 남기기"로 남깁니다. 같은 닉네임으로 하루 5곳까지, 식당당 하루 1번.</footer>
+</div>
+
+<script src="config.js"></script>
+<script src="data.js"></script>
+<script>window.LUNCH={data:window.RESTAURANTS,meta:window.META};</script>
+<script src="cafe/data.js"></script>
+<script>window.CAFE={data:window.RESTAURANTS,meta:window.META};</script>
+<script>
+(function(){
+  const $=id=>document.getElementById(id);
+  const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const API=((window.CONFIG&&window.CONFIG.sheetApi)||'').trim();
+  const SETS={lunch:window.LUNCH, cafe:window.CAFE};
+  let tab='lunch', reviews=[];
+  const starText=v=>{const f=Math.floor(v),h=v-f>=0.5;return '★'.repeat(f)+(h?'⯪':'')+'☆'.repeat(5-f-(h?1:0));};
+  function summarize(d){
+    const rs=reviews.filter(r=>r.id===d.id); if(!rs.length) return null;
+    const avg=k=>rs.reduce((a,r)=>a+Number(r[k]||0),0)/rs.length;
+    const per=rs.map(r=>{const ks=['taste','clean','kind'].concat(Number(r.price)>0?['price']:[]);return ks.reduce((a,k)=>a+Number(r[k]||0),0)/ks.length;});
+    const priced=rs.filter(r=>Number(r.price)>0);
+    const dishes={}; rs.forEach(r=>{const x=String(r.dish||'').trim(); if(x) dishes[x]=(dishes[x]||0)+1;});
+    return { n:rs.length, taste:avg('taste'), clean:avg('clean'), kind:avg('kind'), price:priced.length?priced.reduce((a,r)=>a+Number(r.price),0)/priced.length:0,
+      overall:per.reduce((a,b)=>a+b,0)/per.length, revisit:rs.filter(r=>r.revisit).length/rs.length, last:rs.map(r=>r.date||'').sort().slice(-1)[0],
+      dishes:Object.entries(dishes).sort((a,b)=>b[1]-a[1]).slice(0,3) };
+  }
+  function render(){
+    const set=SETS[tab]; const data=set.data||[]; const zl=id=>((set.meta.zones||[]).find(z=>z.id===id)||{}).label||id;
+    const sort=$('sortBy').value, minN=Number($('minN').value), noFr=$('noFr').checked;
+    const items=data.map(d=>({d,s:summarize(d)})).filter(x=>x.s && x.s.n>=minN && !(noFr&&x.d.franchise));
+    items.sort((a,b)=>{
+      if(sort==='recent') return (b.s.last||'').localeCompare(a.s.last||'') || b.s.n-a.s.n;
+      if(sort==='n') return b.s.n-a.s.n || b.s.overall-a.s.overall;
+      const k=sort==='overall'?'overall':sort; return (b.s[k]-a.s[k]) || b.s.n-a.s.n;
+    });
+    const all=data.map(d=>summarize(d)).filter(Boolean);
+    const nrev=reviews.filter(r=>data.some(d=>d.id===r.id)).length;
+    const who=new Set(reviews.filter(r=>data.some(d=>d.id===r.id)).map(r=>r.who)).size;
+    $('kpis').innerHTML=`<div class="kpi"><b>${nrev}</b><span>누적 별점</span></div><div class="kpi"><b>${all.length}</b><span>별점 있는 곳</span></div><div class="kpi"><b>${who}</b><span>참여한 사람</span></div><div class="kpi"><b>${data.length}</b><span>전체 후보</span></div>`;
+    const byB={}; reviews.forEach(r=>{const d=data.find(x=>x.id===r.id); if(!d) return; const k=d.bldg||zl(d.zone); byB[k]=(byB[k]||0)+1;});
+    $('bld').innerHTML=Object.entries(byB).sort((a,b)=>b[1]-a[1]).slice(0,8).map(([k,v])=>`<span>${esc(k)} ${v}건</span>`).join('');
+    if(!items.length){ $('rank').innerHTML=`<div class="empty">아직 조건에 맞는 곳이 없어요.<br>최소 평가 수를 낮추거나, 룰렛 페이지에서 별점을 남겨 주세요.</div>`; return; }
+    $('rank').innerHTML=items.slice(0,50).map(({d,s},i)=>`<div class="item">
+      <div class="no${i<3?' top':''}">${i+1}</div>
+      <div><div class="nm">${esc(d.name)}${d.franchise?' <span class="badge">프랜차이즈</span>':''}</div>
+        <div class="sub">${esc(d.cat)} · ${esc(d.bldg||zl(d.zone))} · 맛 ${s.taste.toFixed(1)} 청결 ${s.clean.toFixed(1)} 친절 ${s.kind.toFixed(1)}${s.price?' 가격 '+s.price.toFixed(1):''} · 재방문 ${Math.round(s.revisit*100)}%</div>
+        ${s.dishes.length?s.dishes.map(([k,v])=>`<span class="dish">추천 ${esc(k)}${v>1?' ×'+v:''}</span>`).join(''):''}</div>
+      <div class="score"><span class="st">${starText(Math.round(s.overall*2)/2)}</span>${s.overall.toFixed(2)}<br><span style="font-size:11px;color:var(--muted)">${s.n}명</span></div>
+    </div>`).join('');
+  }
+  document.querySelectorAll('#tabs .chip').forEach(c=>c.onclick=()=>{ document.querySelectorAll('#tabs .chip').forEach(x=>x.classList.remove('on')); c.classList.add('on'); tab=c.dataset.tab; render(); });
+  ['sortBy','minN','noFr'].forEach(id=>$(id).addEventListener('input',render));
+  async function load(){
+    if(!API){ $('syncNote').textContent='공유 설정이 없어 랭킹을 만들 수 없어요'; render(); return; }
+    $('syncNote').textContent='불러오는 중…';
+    try{ const r=await fetch(API+'?action=list&t='+Date.now(),{cache:'no-store'}); const j=await r.json(); reviews=j.reviews||[]; $('syncNote').textContent=`별점 ${reviews.length}건 · ${new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'})} 기준`; }
+    catch(e){ $('syncNote').textContent='불러오기 실패 (새로고침 해 보세요)'; }
+    render();
+  }
+  if('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('sw.js').catch(()=>{});
+  render(); load();
+})();
+</script>
+</body>
+</html>

@@ -1,4 +1,4 @@
-// CCMM 룰렛 공통 로직. 페이지는 window.APP = {key, data, meta, cheerers, lines} 를 정의한 뒤 이 파일을 불러온다.
+// 여의도 점심먹기 공통 로직. 페이지는 window.APP = {key, data, meta, cheerers, lines} 를 정의한 뒤 이 파일을 불러온다.
 (function(){
   const APP = window.APP || {};
   const data = APP.data || window.RESTAURANTS || [];
@@ -51,8 +51,9 @@
       `<span style="color:#b3261e">시트 연결 실패 (${esc(syncMsg)})</span> · 캐시 ${n}건${pend}`;
   }
 
-  // ---------- KMAC 평가 ----------
+  // ---------- 직장인 별점 ----------
   const myName = () => load(LS.who,'');
+  const adminKey = () => load('kmac.adminKey','');   // 관리자만: 주소 뒤에 ?admin=키 를 한 번 붙여 열면 저장됨
   const allReviews = () => {
     const byId = new Map();
     if (API) {
@@ -74,10 +75,12 @@
     // 종합 = 각 평가의 항목 평균(가격 항목이 있는 평가는 4개, 없는 옛 평가는 3개)을 다시 평균
     const per = rs.map(r=>{ const ks=['taste','clean','kind'].concat(Number(r.price)>0?['price']:[]); return ks.reduce((a,k)=>a+Number(r[k]||0),0)/ks.length; });
     const overall = per.reduce((a,b)=>a+b,0)/per.length;
-    return { n:rs.length, taste, clean, kind, price, overall, revisit: rs.filter(r=>r.revisit).length/rs.length };
+    const dishes={}; rs.forEach(r=>{ const d=String(r.dish||'').trim(); if(d) dishes[d]=(dishes[d]||0)+1; });
+    const topDish = Object.entries(dishes).sort((a,b)=>b[1]-a[1]).slice(0,3).map(([k,v])=>v>1?`${k}(${v})`:k);
+    return { n:rs.length, taste, clean, kind, price, overall, revisit: rs.filter(r=>r.revisit).length/rs.length, topDish };
   };
   const starText = v => { const full=Math.floor(v), half=v-full>=0.5; return '★'.repeat(full)+(half?'⯪':'')+'☆'.repeat(5-full-(half?1:0)); };
-  const kmacBadge = (sm, long=false) => sm ? `<span class="kmac"><span class="st">${starText(Math.round(sm.overall*2)/2)}</span> ${sm.overall.toFixed(1)}${long?` · 맛 ${sm.taste.toFixed(1)} 청결 ${sm.clean.toFixed(1)} 친절 ${sm.kind.toFixed(1)}${sm.price?' 가격 '+sm.price.toFixed(1):''}`:''} · 재방문 ${Math.round(sm.revisit*100)}% · ${sm.n}명</span>` : '<span class="kmac">아직 평가 없음</span>';
+  const kmacBadge = (sm, long=false) => sm ? `<span class="kmac"><span class="st">${starText(Math.round(sm.overall*2)/2)}</span> ${sm.overall.toFixed(1)}${long?` · 맛 ${sm.taste.toFixed(1)} 청결 ${sm.clean.toFixed(1)} 친절 ${sm.kind.toFixed(1)}${sm.price?' 가격 '+sm.price.toFixed(1):''}`:''} · 재방문 ${Math.round(sm.revisit*100)}% · ${sm.n}명${sm.topDish&&sm.topDish.length?` · 추천 ${esc(sm.topDish.join(', '))}`:''}</span>` : '<span class="kmac">아직 평가 없음</span>';
 
   // ---------- 필터 UI ----------
   const catChips=$('catChips');
@@ -128,7 +131,7 @@
     parts.push(filt.cats.length===CATS.length?'분류 전체':filt.cats.length?filt.cats.join('·'):'분류 없음');
     const inScope=ZONES.filter(z=>z.inScope!==false).map(z=>z.id);
     parts.push(filt.zones.length===ZONES.length?'구역 전체':(filt.zones.length===inScope.length&&inScope.every(z=>filt.zones.includes(z)))?'범위 안 구역':filt.zones.length?`구역 ${filt.zones.length}개`:'구역 없음');
-    const min=parseFloat($('minKmac').value)||0; if(min) parts.push(`KMAC ${min}↑`);
+    const min=parseFloat($('minKmac').value)||0; if(min) parts.push(`별점 ${min}↑`);
     if(!$('includeUnrated').checked) parts.push('평가 있는 곳만');
     if($('revisitOnly').checked) parts.push('재방문 50%↑');
     if($('skipRecent').checked) parts.push('최근 5회 제외');
@@ -186,7 +189,7 @@
       <div class="actions">
         <a class="btn" style="background:#03c75a;color:#fff;border-color:#03c75a" target="_blank" rel="noopener" href="${naverUrl(d)}">네이버지도</a>
         <a class="btn" style="background:#fee500;color:#191600;border-color:#fee500" target="_blank" rel="noopener" href="${kakaoUrl(d)}">카카오맵</a>
-        <button class="btn primary" id="rateFromResult">KMAC 평가하기</button>
+        <button class="btn primary" id="rateFromResult">⭐ 별점 남기기</button>
       </div>
       <div class="actions">
         <button class="btn" id="again">다시 돌리기</button>
@@ -205,7 +208,7 @@
   function closeModals(){ document.querySelectorAll('.modal.open').forEach(m=>m.classList.remove('open')); }
   document.querySelectorAll('.modal').forEach(m=>{ m.addEventListener('click',e=>{ if(e.target===m || e.target.closest('[data-close]')) closeModals(); }); });
   document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeModals(); });
-  let toastT; function toast(msg){ const t=$('toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('show'),2200); }
+  let toastT; function toast(msg,ms){ const t=$('toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('show'),ms||2200); }
 
   // ---------- 별점 입력 위젯 (0.5 단위) ----------
   const STAR = '<svg viewBox="0 0 24 24"><defs><linearGradient id="G" x1="0" x2="1"><stop offset="50%" stop-color="#f5a623"/><stop offset="50%" stop-color="#ffe6ef"/></linearGradient></defs><path d="M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4 6.1 20.5l1.2-6.5L2.5 9.4l6.6-.9z" stroke="#e8a6c0" stroke-width="1.2"/></svg>';
@@ -232,8 +235,8 @@
   buildStars();
   function openRate(d){
     rateTarget=d; draft={taste:0,clean:0,kind:0,price:0,revisit:null};
-    $('rateTitle').textContent=`KMAC 별점 · ${d.name}`;
-    $('who').value=load(LS.who,''); $('note').value='';
+    $('rateTitle').textContent=`별점 남기기 · ${d.name}`;
+    $('who').value=load(LS.who,''); $('note').value=''; if($('dish')) $('dish').value='';
     paintStars(); renderReviewList(d); closeModals(); openModal('rateModal');
   }
   $('saveRate').onclick=()=>{
@@ -243,16 +246,22 @@
     if(!draft.taste||!draft.clean||!draft.kind||!draft.price) return toast('맛·청결·친절도·가격 별점을 모두 매겨 주세요.');
     const price=draft.price;
     if(draft.revisit===null) return toast('재방문 의사를 골라 주세요.');
+    const dish=($('dish')?$('dish').value:'').trim().slice(0,30);
+    const note=$('note').value.trim().slice(0,200);
+    const today=new Date().toISOString().slice(0,10);
+    const mineToday=allReviews().filter(r=>r.mine && r.date===today).length;
+    if(mineToday>=5) return toast('하루에 5곳까지만 평가할 수 있어요. 내일 다시 남겨 주세요.');
+    if(allReviews().some(r=>r.mine && r.id===rateTarget.id && r.date===today)) return toast('오늘 이 식당은 이미 평가했어요.');
     save(LS.who,who);
-    const r={ rid:Date.now().toString(36)+Math.random().toString(36).slice(2,6), id:rateTarget.id, who, taste:draft.taste, clean:draft.clean, kind:draft.kind, revisit:draft.revisit, price, note:$('note').value.trim(), date:new Date().toISOString().slice(0,10) };
+    const r={ rid:Date.now().toString(36)+Math.random().toString(36).slice(2,6), id:rateTarget.id, who, taste:draft.taste, clean:draft.clean, kind:draft.kind, revisit:draft.revisit, price, dish, note, date:today };
     if (API) {
       pending.push(r); save(LS2.pending,pending); renderReviewList(rateTarget); render(); renderSync();
       const target=rateTarget;
-      apiPost({action:'add',review:r}).then(()=>{ pending=pending.filter(x=>x.rid!==r.rid); save(LS2.pending,pending); sharedReviews.push(r); save(LS2.cache,sharedReviews); toast('구글 시트에 저장했어요.'); if(rateTarget===target) renderReviewList(target); render(); renderSync(); })
-        .catch(e=>{ toast('시트 전송 실패, 임시 보관했어요. 나중에 자동 재시도합니다.'); renderSync(); });
+      apiPost({action:'add',review:r}).then(()=>{ pending=pending.filter(x=>x.rid!==r.rid); save(LS2.pending,pending); sharedReviews.push(r); save(LS2.cache,sharedReviews); toast('별점이 등록됐어요. 고마워요!'); if(rateTarget===target) renderReviewList(target); render(); renderSync(); })
+        .catch(e=>{ toast('전송 실패, 임시 보관했어요. 다음 접속 때 자동으로 다시 보냅니다.'); renderSync(); });
     } else {
       localReviews.push(r); save(LS.reviews,localReviews);
-      toast('저장했어요. "평가 내보내기"로 팀과 공유할 수 있어요.');
+      toast('저장했어요.');
       renderReviewList(rateTarget); render();
     }
   };
@@ -261,14 +270,14 @@
     const sm=summary(d.id);
     $('reviewList').innerHTML = `<div class="sm" style="font-weight:900;color:var(--muted);font-size:12px">이 식당의 평가 ${rs.length}건 ${sm?'· 평균 '+sm.overall.toFixed(2):''}</div>` +
       rs.map(r=>`<div class="review"><div><span class="who">${esc(r.who)}</span> <span class="sm">${esc(r.date||'')}${r.pending?' · <span style="color:#b3261e">미전송</span>':''}</span><br>
-        맛 ${Number(r.taste).toFixed(1)} · 청결 ${Number(r.clean).toFixed(1)} · 친절 ${Number(r.kind).toFixed(1)} ${Number(r.price)>0?' · 가격 '+Number(r.price).toFixed(1):''} · 재방문 ${r.revisit?'Y':'N'}${r.note?'<br><span class="sm">'+esc(r.note)+'</span>':''}</div>
-        ${r.mine?`<button data-del="${esc(r.rid)}">삭제</button>`:''}</div>`).join('');
+        맛 ${Number(r.taste).toFixed(1)} · 청결 ${Number(r.clean).toFixed(1)} · 친절 ${Number(r.kind).toFixed(1)} ${Number(r.price)>0?' · 가격 '+Number(r.price).toFixed(1):''} · 재방문 ${r.revisit?'Y':'N'}${r.dish?' · <b>추천 '+esc(r.dish)+'</b>':''}${r.note?'<br><span class="sm">'+esc(r.note)+'</span>':''}</div>
+        ${(r.mine||adminKey())?`<button data-del="${esc(r.rid)}">삭제</button>`:''}</div>`).join('');
     $('reviewList').querySelectorAll('[data-del]').forEach(b=>b.onclick=async()=>{
       const rid=b.dataset.del;
       if(!confirm('이 평가를 삭제할까요?')) return;
       if (API) {
         if (pending.find(x=>x.rid===rid)) { pending=pending.filter(x=>x.rid!==rid); save(LS2.pending,pending); }
-        else { try{ await apiPost({action:'delete',rid,who:myName()}); sharedReviews=sharedReviews.filter(x=>x.rid!==rid); save(LS2.cache,sharedReviews); toast('삭제했어요.'); }catch(e){ return toast('삭제 실패: '+e.message); } }
+        else { try{ await apiPost({action:'delete',rid,who:myName(),adminKey:adminKey()}); sharedReviews=sharedReviews.filter(x=>x.rid!==rid); save(LS2.cache,sharedReviews); toast('삭제했어요.'); }catch(e){ return toast('삭제 실패: '+e.message); } }
       } else { localReviews=localReviews.filter(x=>x.rid!==rid); save(LS.reviews,localReviews); }
       renderReviewList(d); render(); renderSync();
     });
@@ -315,7 +324,7 @@
     const rated=data.filter(d=>summary(d.id)).length, nrev=allReviews().length;
     $('poolCount').textContent=`지금 ${p.length}곳`+(p.length>120?' · 글자는 120곳 이하일 때 표시':'');
     $('poolCnt').textContent=p.length; $('filterText').textContent=filterText();
-    $('stats').innerHTML=`전체 후보 <b>${data.length}</b>곳 · KMAC 평가 <b>${rated}</b>곳 (${nrev}건) · 룰렛 대상 <b>${p.length}</b>곳`;
+    $('stats').innerHTML=`전체 후보 <b>${data.length}</b>곳 · 별점 있는 곳 <b>${rated}</b>곳 (${nrev}건) · 룰렛 대상 <b>${p.length}</b>곳`;
     $('foot').innerHTML=meta.footer||'';
     renderTable(); renderHistory();
   }
@@ -344,5 +353,16 @@
     Object.values(LS).forEach(k=>{try{localStorage.removeItem(k)}catch(e){}}); location.reload();
   };
   $('refreshBtn').onclick=()=>{ if(!API) return toast('로컬 모드예요. config.js 에 시트 주소를 넣으면 공유됩니다.'); fetchShared(); };
+  // ---------- PWA: 서비스워커 등록 · 설치 버튼 · 관리자 키 ----------
+  try{ const k=new URLSearchParams(location.search).get('admin'); if(k){ save('kmac.adminKey',k); history.replaceState(null,'',location.pathname); toast('관리자 모드로 저장했어요.'); } }catch(e){}
+  if('serviceWorker' in navigator && location.protocol.startsWith('http')){
+    const base=document.querySelector('script[src$="app.js"]'); const swUrl=base?new URL('sw.js',base.src).href:'sw.js';
+    navigator.serviceWorker.register(swUrl).catch(()=>{});
+  }
+  let installEvt=null;
+  window.addEventListener('beforeinstallprompt',e=>{ e.preventDefault(); installEvt=e; const b=$('installBtn'); if(b){ b.hidden=false; b.onclick=async()=>{ installEvt.prompt(); await installEvt.userChoice; b.hidden=true; installEvt=null; }; } });
+  const ua=navigator.userAgent; const isIOS=/iPhone|iPad|iPod/.test(ua) && !window.MSStream; const standalone=window.matchMedia('(display-mode: standalone)').matches || navigator.standalone;
+  if(isIOS && !standalone && $('installBtn')){ const b=$('installBtn'); b.hidden=false; b.textContent='📲 홈 화면에 추가'; b.onclick=()=>toast('사파리 아래 공유 버튼 → "홈 화면에 추가"를 누르면 앱처럼 쓸 수 있어요.',5000); }
+
   render(); renderSync(); fetchShared();
 })();

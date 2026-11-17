@@ -1,0 +1,21 @@
+{
+  "name": "여의도 점심먹기",
+  "short_name": "점심먹기",
+  "description": "서여의도 직장인이 직접 매기는 점심·디저트 별점과 룰렛",
+  "lang": "ko",
+  "start_url": "./?source=pwa",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#fff6f9",
+  "theme_color": "#f27fa9",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "점심 룰렛", "url": "./", "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }] },
+    { "name": "디저트 룰렛", "url": "./cafe/", "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }] },
+    { "name": "랭킹", "url": "./ranking.html", "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }] }
+  ]
+}
