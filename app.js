@@ -176,7 +176,7 @@
   // 지도 링크: 네이버는 상호+도로명주소로 검색(흔한 상호 오매칭 방지), 카카오는 수집 때 받은 장소 번호가 있으면 그 페이지로 바로
   const addrCore=d=>String(d.addr||'').replace(/\s*(지하\s*)?\d+층.*$/,'').replace(/\s*[A-Za-z]?\d+(-\d+)?호.*$/,'').replace(/\(.*?\)/g,'').replace(/주소 미확인.*/,'').trim();
   const mapQuery=d=>{ if(d.q) return d.q; const a=addrCore(d); return a?`${d.name} 영등포구 ${a}`:`${d.name} 여의도`; };
-  const naverUrl=d=>'https://map.naver.com/p/search/'+encodeURIComponent(mapQuery(d));
+  const naverUrl=d=>d.naverId?`https://map.naver.com/p/entry/place/${d.naverId}`:'https://map.naver.com/p/search/'+encodeURIComponent(mapQuery(d));
   const kakaoUrl=d=>{ const m=String(d.src||'').match(/place\.map\.kakao\.com\/(\d+)/); return m?`https://place.map.kakao.com/${m[1]}`:'https://map.kakao.com/?q='+encodeURIComponent(mapQuery(d)); };
   function finish(d){
     spinning=false; spinBtn.disabled=false;
