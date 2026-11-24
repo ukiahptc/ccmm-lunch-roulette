@@ -21,6 +21,7 @@
 <main>
   <section class="view" id="view-roulette">
     <div class="card wheel-card">
+      <div class="hero"><small id="today"></small><b id="heroQ">오늘 점심 뭐 먹지?</b></div>
       <div class="wheel-wrap">
         <div class="pin" aria-hidden="true"></div>
         <canvas id="wheel" width="720" height="720" aria-label="룰렛"></canvas>
@@ -29,6 +30,8 @@
       <div class="sub" id="poolInfo"></div>
     </div>
     <div class="card">
+      <div class="row-title">최근 뽑힌 곳</div>
+      <div class="chips" id="recent"></div>
       <div class="row-title">지역</div>
       <div class="chips" id="areaChips"></div>
       <label class="check"><input type="checkbox" id="skipRecent"> 최근 뽑힌 5곳 빼기</label>
@@ -62,5 +65,6 @@
 <script src="../config.js"></script>
 <script src="data.js"></script>
 <script src="yongsan.js"></script>
+<script src="bg.js"></script>
 </body>
 </html>

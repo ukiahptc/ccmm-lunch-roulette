@@ -103,9 +103,34 @@
   }
   $('spin').onclick=spin;
 
-  // ---------- 지도 ----------
-  const mapQuery=d=>d.q || (d.addr ? `${d.name} 용산구 ${d.addr.replace(/\s*(지하\s*)?\d+층.*$/,'')}` : `${d.name} 용산`);
+  // ---------- 네이버 지도 ----------
+  // 검색어: 직접 지정(q) > 상호+도로명 > 상호+용산. 휴대폰은 네이버지도 앱을 먼저 열고, 앱이 없으면 웹으로 넘어간다.
+  const mapQuery=d=>d.q || (d.addr ? `${d.name} 용산구 ${d.addr.replace(/\s*(지하\s*)?\d+층.*$/,'').replace(/\s*\d+호.*$/,'')}` : `${d.name} 용산`);
   const naverWeb=d=>d.naverId?`https://map.naver.com/p/entry/place/${d.naverId}`:'https://map.naver.com/p/search/'+encodeURIComponent(mapQuery(d));
+  const naverApp=d=>{ const app=encodeURIComponent(location.hostname||'yongsan.roulette');
+    return d.naverId?`nmap://place?id=${d.naverId}&appname=${app}`:`nmap://search?query=${encodeURIComponent(mapQuery(d))}&appname=${app}`; };
+  // 네이버 리뷰 화면: 장소 번호가 있으면 방문자 리뷰 탭으로 바로, 없으면 검색 결과에서 가게를 눌러 리뷰 탭으로
+  const naverReview=d=>d.naverId?`https://m.place.naver.com/restaurant/${d.naverId}/review/visitor`:naverWeb(d);
+  const isMobile=/iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  function openNaver(d){
+    if(!isMobile){ window.open(naverWeb(d),'_blank','noopener'); return; }
+    let left=false; const onHide=()=>{ left=true; };
+    document.addEventListener('visibilitychange',onHide,{once:true});
+    location.href=naverApp(d);
+    setTimeout(()=>{ document.removeEventListener('visibilitychange',onHide); if(!left && !document.hidden) location.href=naverWeb(d); },1500);
+  }
+
+  // ---------- 메신저 공유 ----------
+  function shareText(d){
+    const cl=CATS.find(c=>c.id===state.cat).label;
+    return `[용산 맛집룰렛 · ${cl}]\n오늘은 ${d.name} 어때요? (${d.menu})\n네이버지도: ${naverWeb(d)}`;
+  }
+  async function share(d){
+    const text=shareText(d);
+    if(navigator.share){ try{ await navigator.share({text}); return; }catch(e){ if(e.name==='AbortError') return; } }
+    try{ await navigator.clipboard.writeText(text); toast('복사했어요. 메신저 대화방에 붙여 넣으세요.'); }
+    catch(e){ prompt('아래 내용을 복사해 메신저에 붙여 넣으세요', text); }
+  }
 
   // ---------- 결과 ----------
   function finish(d){
@@ -113,20 +138,80 @@
     hist=[d.id,...hist.filter(x=>x!==d.id)].slice(0,10); save(LS.hist,hist);
     openResult(d);
   }
+  const FEEL = [ {v:5,icon:'👍',label:'좋았어요'}, {v:3,icon:'😐',label:'보통'}, {v:1,icon:'👎',label:'별로'} ];
+  const QUICK = ['가성비','빨리 나와요','혼밥 OK','웨이팅 있음','조용해요','단체석','양 많아요'];
+  const SIT = [['lunch','점심'],['dinner','저녁'],['date','데이트'],['team','회식']];
+  function reviewHtml(d){
+    const s=summary(d.id), rs=reviews().filter(r=>r.id===d.id).slice(-3).reverse();
+    const sitBadges = s ? SIT.filter(([c])=>s.cats[c]).map(([c,l])=>`${l} ${s.cats[c]}`).join(' · ') : '';
+    return `
+      <div class="rv-head"><b>직장인 한줄평</b><span>${s?`👍 ${s.good} / ${s.n}건${sitBadges?' · '+sitBadges:''}`:'첫 평가를 남겨 주세요'}</span></div>
+      ${rs.map(r=>`<div class="rv-item"><span class="rv-who">${esc(r.who)}</span> ${Number(r.taste)>=4?'👍':Number(r.taste)>=2.5?'😐':'👎'} ${esc(r.note||'').replace(/\[(점심|저녁|데이트|회식)\]/g,'<span class="tag">$1</span>')}${r.pending?' <em>전송 대기</em>':''}</div>`).join('')}
+      <div class="rv-form" id="rvForm">
+        <div class="rv-q">어땠어요?</div>
+        <div class="rv-feel">${FEEL.map(f=>`<button data-feel="${f.v}"><span>${f.icon}</span>${f.label}</button>`).join('')}</div>
+        <div class="rv-more" hidden>
+          <div class="rv-q">어떤 자리였어요? <small>고른 카테고리에 이 식당이 추가돼요</small></div>
+          <div class="chips" id="rvSit">${SIT.map(([c,l])=>`<button class="chip ${c===state.cat?'on':''}" data-sit="${l}">${l}</button>`).join('')}</div>
+          <div class="chips" id="rvQuick">${QUICK.map(q=>`<button class="chip" data-q="${q}">${q}</button>`).join('')}</div>
+          <div class="rv-row">
+            <input id="rvWho" maxlength="20" placeholder="닉네임" value="${esc(load(LS.who,''))}">
+            <input id="rvMemo" maxlength="60" placeholder="한마디 (선택)">
+          </div>
+          <button class="btn primary" id="rvSend" style="width:100%">등록</button>
+        </div>
+      </div>`;
+  }
+  function bindReview(d){
+    let feel=0; const form=$('rvForm');
+    form.querySelectorAll('[data-feel]').forEach(b=>b.onclick=()=>{ feel=Number(b.dataset.feel);
+      form.querySelectorAll('[data-feel]').forEach(x=>x.classList.toggle('on',x===b)); form.querySelector('.rv-more').hidden=false; });
+    form.querySelectorAll('#rvSit .chip, #rvQuick .chip').forEach(b=>b.onclick=()=>b.classList.toggle('on'));
+    $('rvSend').onclick=async()=>{
+      const who=$('rvWho').value.trim(); if(!feel){ toast('👍 😐 👎 중에 하나를 골라 주세요'); return; }
+      if(!who){ $('rvWho').focus(); toast('닉네임을 적어 주세요 (다음부터는 자동 입력)'); return; }
+      save(LS.who,who);
+      const sits=[...form.querySelectorAll('#rvSit .on')].map(b=>`[${b.dataset.sit}]`);
+      const qs=[...form.querySelectorAll('#rvQuick .on')].map(b=>'#'+b.dataset.q.replace(/\s/g,''));
+      const memo=$('rvMemo').value.trim();
+      const today=new Date(Date.now()+9*3600e3).toISOString().slice(0,10);
+      // 여의도와 같은 시트 열에 맞춘다: 한 번의 선택을 맛·청결·친절·가격 칸에 같은 값으로 저장
+      const r={rid:'ys'+Date.now().toString(36)+Math.random().toString(36).slice(2,6), id:d.id, who, taste:feel, clean:feel, kind:feel, price:feel,
+        revisit:feel>=4, note:[...sits,...qs,memo].filter(Boolean).join(' ').slice(0,200), dish:'', date:today};
+      pending.push(r); save(LS.pending,pending); openResult(d); renderAll();
+      if(!API){ toast('로컬 모드라 이 브라우저에만 저장했어요'); return; }
+      try{ const res=await fetch(API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'add',review:r})}); const j=await res.json();
+        if(!j.ok) throw new Error(j.error||'저장 실패');
+        pending=pending.filter(x=>x.rid!==r.rid); save(LS.pending,pending); shared.push(r); save(LS.cache,shared); toast('등록했어요. 고마워요!');
+      }catch(e){ if(/하루|올바르지/.test(e.message)){ pending=pending.filter(x=>x.rid!==r.rid); save(LS.pending,pending); toast(e.message); } else toast('잠시 뒤 자동으로 다시 보낼게요'); }
+      if($('resultSheet').classList.contains('open')) openResult(d); renderAll();
+    };
+  }
+  async function retryPending(){
+    if(!API||!pending.length) return; const rest=[];
+    for(const r of pending){ try{ const res=await fetch(API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'add',review:r})}); const j=await res.json(); if(!j.ok) throw 0; shared.push(r); }catch(e){ rest.push(r); } }
+    pending=rest; save(LS.pending,pending); save(LS.cache,shared); renderAll();
+  }
   function openResult(d){
-    const s=summary(d.id), catLabels=CATS.filter(c=>inCat(d,c.id)).map(c=>c.label);
+    const catLabels=CATS.filter(c=>inCat(d,c.id)).map(c=>c.label);
     $('resultBody').innerHTML=`
       <div class="grab"></div>
       <div class="r-head"><div class="r-name">${esc(d.name)}</div><div class="r-menu">${esc(d.menu)}</div></div>
       <div class="r-tags">${catLabels.map(l=>`<span class="tag">${l}</span>`).join('')}${d.dc?`<span class="tag ghost">다이닝코드 ★${d.dc}</span>`:''}${d.note?`<span class="tag warn">${esc(d.note)}</span>`:''}</div>
-      <div class="r-addr">${d.addr?esc(d.addr):'주소 확인 필요 · 네이버지도에서 확인해 주세요'}</div>
-      <div class="r-score">${s?`직장인 평가 ${s.n}건 · 👍 ${s.good}`:'아직 직장인 평가가 없어요'}</div>
+      <div class="r-addr">📍 ${d.addr?esc(d.addr):'주소 확인 필요 · 네이버지도에서 확인해 주세요'}</div>
+      <button class="btn naver big" id="goNaver"><b class="n-logo">N</b> 네이버지도에서 보기</button>
       <div class="r-actions">
-        <a class="btn naver" target="_blank" rel="noopener" href="${naverWeb(d)}">네이버지도에서 보기</a>
-        <button class="btn" id="again">다시 돌리기</button>
-        <button class="btn ghost" id="closeSheet">닫기</button>
-      </div>`;
+        <button class="btn" id="share">💬 메신저로 공유</button>
+        <a class="btn" target="_blank" rel="noopener" href="${naverReview(d)}">✍️ 네이버 리뷰 쓰기</a>
+        <button class="btn" id="again">🎯 다시 돌리기</button>
+        <button class="btn ghost" id="skipToday">오늘은 빼고 다시</button>
+      </div>
+      <div class="rv">${reviewHtml(d)}</div>
+      <button class="btn ghost close-x" id="closeSheet" aria-label="닫기">✕</button>`;
+    $('goNaver').onclick=()=>openNaver(d); $('share').onclick=()=>share(d);
     $('again').onclick=spin; $('closeSheet').onclick=closeSheet;
+    $('skipToday').onclick=()=>{ hist=[d.id,...hist.filter(x=>x!==d.id)]; save(LS.hist,hist); state.skipRecent=true; persist(); renderAll(); spin(); };
+    bindReview(d);
     $('resultSheet').classList.add('open'); $('resultSheet').setAttribute('aria-hidden','false');
   }
   function closeSheet(){ $('resultSheet').classList.remove('open'); $('resultSheet').setAttribute('aria-hidden','true'); }
@@ -158,12 +243,19 @@
   let toastT; function toast(m){ const t=$('toast'); t.textContent=m; t.classList.add('show'); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('show'),2200); }
 
   function renderAll(){
-    renderCats(); renderAreas(); renderView();
+    renderCats(); renderAreas(); renderView(); renderRecent();
+    $('heroQ').textContent = {lunch:'오늘 점심 뭐 먹지?',dinner:'퇴근하고 저녁 어디서?',date:'오늘 데이트 어디 갈까?',team:'이번 회식 장소는?'}[state.cat];
+    $('today').textContent = new Date().toLocaleDateString('ko-KR',{month:'long',day:'numeric',weekday:'short'});
     const p=pool(); current=p; if(!spinning) drawWheel(p);
     const cl=CATS.find(c=>c.id===state.cat).label;
     $('poolInfo').textContent = `${cl} 후보 ${p.length}곳`;
     renderList(); renderRank();
   }
+  function renderRecent(){
+    const items=hist.slice(0,5).map(id=>DATA.find(d=>d.id===id)).filter(Boolean);
+    $('recent').innerHTML = items.length ? items.map(d=>`<button class="chip" data-id="${d.id}">${esc(d.name)}</button>`).join('') : '<span class="sub">아직 돌린 기록이 없어요</span>';
+    $('recent').querySelectorAll('[data-id]').forEach(b=>b.onclick=()=>openResult(DATA.find(d=>d.id===b.dataset.id)));
+  }
   window.YS = { spin, openResult, toast, summary, reviews, CATS, DATA, state };
-  renderAll(); fetchShared();
+  renderAll(); fetchShared().then(retryPending);
 })();
