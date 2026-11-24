@@ -94,8 +94,11 @@
     ctx.beginPath(); ctx.arc(R,R,46,0,Math.PI*2); ctx.fillStyle='#fff'; ctx.fill();
   }
   const pickIndex=n=>{ const step=Math.PI*2/n; const norm=(((-Math.PI/2-angle)%(Math.PI*2))+Math.PI*4)%(Math.PI*2); return Math.floor(norm/step)%n; };
+  // 후보가 많으면 원판 글자가 안 읽혀서, 돌릴 때마다 무작위 36곳만 원판에 올린다
+  const MAXW=36;
+  const wheelItems=p=>{ if(p.length<=MAXW) return p; const a=[...p]; for(let i=a.length-1;i>0;i--){ const j=Math.random()*(i+1)|0; [a[i],a[j]]=[a[j],a[i]]; } return a.slice(0,MAXW); };
   function spin(){
-    if(spinning) return; const items=pool();
+    if(spinning) return; const items=wheelItems(pool());
     if(!items.length){ toast('조건에 맞는 후보가 없어요. 지역을 더 골라 주세요.'); return; }
     closeSheet(); current=items; spinning=true; $('spin').disabled=true;
     const total=Math.PI*2*(6+Math.random()*3)+Math.random()*Math.PI*2, dur=4000+Math.random()*1000, t0=performance.now(), a0=angle, ease=t=>1-Math.pow(1-t,4);
@@ -246,9 +249,9 @@
     renderCats(); renderAreas(); renderView(); renderRecent();
     $('heroQ').textContent = {lunch:'오늘 점심 뭐 먹지?',dinner:'퇴근하고 저녁 어디서?',date:'오늘 데이트 어디 갈까?',team:'이번 회식 장소는?'}[state.cat];
     $('today').textContent = new Date().toLocaleDateString('ko-KR',{month:'long',day:'numeric',weekday:'short'});
-    const p=pool(); current=p; if(!spinning) drawWheel(p);
+    const p=pool(); if(!spinning){ current=wheelItems(p); drawWheel(current); }
     const cl=CATS.find(c=>c.id===state.cat).label;
-    $('poolInfo').textContent = `${cl} 후보 ${p.length}곳`;
+    $('poolInfo').textContent = p.length>MAXW ? `${cl} 후보 ${p.length}곳 · 돌릴 때마다 ${MAXW}곳을 무작위로 원판에 올려요` : `${cl} 후보 ${p.length}곳`;
     renderList(); renderRank();
   }
   function renderRecent(){

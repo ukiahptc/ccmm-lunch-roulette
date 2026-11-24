@@ -13,18 +13,25 @@ body[data-cat="team"]{ --sky:#05060f; --brand:#0f9d8a; --w1:#c9fff4; --w2:#fff3b
 *{box-sizing:border-box}
 html,body{margin:0}
 body{font-family:"Noto Sans KR",system-ui,-apple-system,sans-serif;color:var(--ink);background:#eef3fb;min-height:100vh;padding-bottom:84px;transition:background .4s}
-#bg{position:fixed;inset:0;z-index:-1;background:linear-gradient(180deg,var(--bg-top,#f4f8ff),var(--bg-bottom,#e6effc));transition:background .4s}
-#bg .dots{position:absolute;inset:0;opacity:.35;background-image:radial-gradient(var(--bg-dot,#b7c7e0) .8px,transparent .9px);background-size:14px 14px;-webkit-mask-image:linear-gradient(180deg,transparent,#000 40%,#000 70%,transparent);mask-image:linear-gradient(180deg,transparent,#000 40%,#000 70%,transparent)}
-#bg .skyline{position:absolute;left:0;right:0;bottom:70px;height:88px}
-#bg .skyline svg{position:absolute;bottom:0;height:100%;width:auto;display:block;overflow:hidden}
-#bg .skyline .l{left:0}
-#bg .skyline .r{right:0}
-#bg .train{animation:train 18s linear infinite}
-#bg .glint{animation:glint 3s ease-in-out infinite}
-#bg .screen{animation:glint 2.4s ease-in-out infinite}
-@keyframes train{from{transform:translateX(-30px)}to{transform:translateX(150px)}}
-@keyframes glint{50%{opacity:.15}}
-@media (min-width:700px){#bg .skyline{height:130px;bottom:64px}}
+#bg{position:fixed;inset:0;z-index:-1;overflow:hidden}
+#bg svg{position:absolute;left:0;top:0;width:100%;display:block}
+#bg .scan{position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(to bottom,rgba(0,0,0,.05) 0 1px,transparent 1px 3px)}
+#bg .tw{animation:tw 3s steps(2) infinite}
+#bg .blink{animation:tw 1.4s steps(2) infinite}
+#bg .neon{animation:neon 4s steps(1) infinite}
+#bg .screen{animation:tw 2.2s steps(3) infinite}
+#bg .cloud{animation:drift 60s steps(30) infinite alternate}
+#bg .train{animation:train 30s linear infinite}
+#bg .car.r{animation:carR linear infinite}
+#bg .car.l{animation:carL linear infinite}
+#bg .walker{animation:walk ease-in-out infinite alternate}
+@keyframes tw{50%{opacity:.3}}
+@keyframes neon{0%,100%{opacity:1}47%{opacity:.4}49%{opacity:1}51%{opacity:.6}53%{opacity:1}}
+@keyframes drift{to{transform:translateX(14px)}}
+@keyframes train{from{transform:translateX(-90px)}to{transform:translateX(660px)}}
+@keyframes carR{from{transform:translateX(-30px)}to{transform:translateX(660px)}}
+@keyframes carL{from{transform:translateX(660px)}to{transform:translateX(-30px)}}
+@keyframes walk{from{transform:translateX(0)}to{transform:translateX(var(--d,40px))}}
 @media (prefers-reduced-motion:reduce){#bg *{animation:none!important}}
 button{font:inherit;cursor:pointer}
 .top{position:sticky;top:0;z-index:5;display:flex;align-items:center;padding:12px 16px;background:#fff;border-bottom:1px solid var(--line)}
@@ -112,3 +119,6 @@ ol.list{counter-reset:r}
 .rv-row input{padding:10px;border:1px solid var(--line);border-radius:10px;font:inherit;font-size:14px;min-width:0}
 #rvQuick .chip{font-size:13px;padding:6px 10px}
 
+
+/* 3안 배경: 룰렛 화면 맨 아래에 거리 풍경이 보이도록 여백 */
+#view-roulette::after{content:"";display:block;height:150px}
