@@ -7,6 +7,7 @@
 - 점심 룰렛: https://ukiahptc.github.io/ccmm-lunch-roulette/
 - 디저트 룰렛: https://ukiahptc.github.io/ccmm-lunch-roulette/cafe/
 - 랭킹: https://ukiahptc.github.io/ccmm-lunch-roulette/ranking.html
+- 용산 맛집룰렛: https://ukiahptc.github.io/ccmm-lunch-roulette/yongsan/ (점심·저녁·데이트 맞춤·회식 맞춤, `yongsan/` 폴더에 따로 있음. 후보는 `yongsan/data.js`)
 - 로컬에서 보려면 `index.html` 을 브라우저로 열면 된다.
 
 ## 파일 구성

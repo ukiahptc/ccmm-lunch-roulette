@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>용산 맛집룰렛</title>
+<meta name="theme-color" content="#1b2340">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="yongsan.css">
+</head>
+<body data-cat="lunch">
+<div id="bg" aria-hidden="true"></div>
+
+<header class="top">
+  <div class="brand"><span class="logo">YS</span><div><b>용산 맛집룰렛</b><small id="sync">불러오는 중…</small></div></div>
+</header>
+
+<nav class="cats" id="cats" role="tablist"></nav>
+
+<main>
+  <section class="view" id="view-roulette">
+    <div class="card wheel-card">
+      <div class="hero"><small id="today"></small><b id="heroQ">오늘 점심 뭐 먹지?</b></div>
+      <div class="wheel-wrap">
+        <div class="pin" aria-hidden="true"></div>
+        <canvas id="wheel" width="720" height="720" aria-label="룰렛"></canvas>
+      </div>
+      <button class="btn primary big" id="spin">돌리기</button>
+      <div class="sub" id="poolInfo"></div>
+    </div>
+    <div class="card">
+      <div class="row-title">최근 뽑힌 곳</div>
+      <div class="chips" id="recent"></div>
+      <div class="row-title">지역</div>
+      <div class="chips" id="areaChips"></div>
+      <label class="check"><input type="checkbox" id="skipRecent"> 최근 뽑힌 5곳 빼기</label>
+    </div>
+  </section>
+
+  <section class="view" id="view-list" hidden>
+    <div class="card">
+      <input class="search" id="q" type="search" placeholder="식당·메뉴 검색">
+      <ul class="list" id="list"></ul>
+    </div>
+  </section>
+
+  <section class="view" id="view-rank" hidden>
+    <div class="card">
+      <div class="row-title">이 카테고리 직장인 평가 순위</div>
+      <ol class="list" id="rank"></ol>
+    </div>
+  </section>
+</main>
+
+<nav class="tabbar">
+  <button data-view="roulette" class="on"><span>🎯</span>룰렛</button>
+  <button data-view="list"><span>📋</span>목록</button>
+  <button data-view="rank"><span>🏆</span>랭킹</button>
+</nav>
+
+<div class="sheet" id="resultSheet" aria-hidden="true"><div class="sheet-body" id="resultBody"></div></div>
+<div class="toast" id="toast"></div>
+
+<script src="../config.js"></script>
+<script src="data.js"></script>
+<script src="yongsan.js"></script>
+<script src="bg.js"></script>
+</body>
+</html>
