@@ -9,9 +9,9 @@
     {id:'team',   label:'회식 맞춤',  icon:'🍻'}
   ];
   const AREAS = [
-    {id:'station',    label:'용산역·전자상가'},
+    {id:'station',    label:'용산역 앞·아이파크몰'},
     {id:'sinyongsan', label:'신용산·용리단길'},
-    {id:'samgakji',   label:'삼각지·남영'}
+    {id:'samgakji',   label:'삼각지역 근처'}
   ];
   const LS = { state:'ys.state.v1', hist:'ys.hist.v1', cache:'ys.shared.cache.v1', pending:'ys.pending.v1', who:'kmac.who' };
   const load=(k,d)=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}};
