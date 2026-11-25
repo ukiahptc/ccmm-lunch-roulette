@@ -132,7 +132,6 @@ window.YS_DATA = [
   {"id": "ys-170", "name": "쿠촐로 서울", "menu": "파스타", "dc": 4.1, "cats": ["date"], "areas": ["sinyongsan"], "addr": "", "note": "", "ev": ["다이닝코드 「신용산 브런치 데이트」 상위", "다이닝코드 「신용산 와인 데이트」 상위"]},
   {"id": "ys-171", "name": "미트미르 김숙성", "menu": "삼겹살", "dc": 4.8, "cats": ["team"], "areas": ["sinyongsan", "station"], "addr": "", "note": "", "ev": ["다이닝코드 「신용산 고기 회식」 상위", "다이닝코드 「신용산 삼겹살 회식」 상위", "다이닝코드 「신용산 한식 회식」 상위", "다이닝코드 「용산역 삼겹살 회식」 상위"]},
   {"id": "ys-172", "name": "차알 브라운", "menu": "중식", "dc": 4.2, "cats": ["team"], "areas": ["sinyongsan"], "addr": "", "note": "", "ev": ["다이닝코드 「신용산 중식 회식」 상위"]},
-  {"id": "ys-173", "name": "더기와", "menu": "퓨전한식", "dc": 4.0, "cats": ["team"], "areas": ["sinyongsan"], "addr": "", "note": "", "ev": ["다이닝코드 「신용산 한식 회식」 상위"]},
   {"id": "ys-174", "name": "카토", "menu": "프렌치토스트", "dc": 4.2, "cats": ["date"], "areas": ["station"], "addr": "", "note": "위치 확인 필요", "ev": ["다이닝코드 「용산역 브런치 데이트」 상위"]},
   {"id": "ys-175", "name": "시그니처랩", "menu": "파스타", "dc": 3.8, "cats": ["date"], "areas": ["station"], "addr": "", "note": "위치 확인 필요", "ev": ["다이닝코드 「용산역 스테이크 데이트」 상위"]},
   {"id": "ys-176", "name": "직각식탁", "menu": "어복쟁반", "dc": 4.0, "cats": ["team"], "areas": ["station"], "addr": "", "note": "", "ev": ["다이닝코드 「용산역 횟집 회식」 상위"]},
